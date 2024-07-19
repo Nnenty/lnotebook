@@ -1,0 +1,4 @@
+CREATE TABLE IF NOTE EXISTS (
+    note_name NOT NULL TEXT,
+    
+)
