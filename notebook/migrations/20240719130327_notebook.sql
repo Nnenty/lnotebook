@@ -1,4 +1,4 @@
-CREATE TABLE IF NOTE EXISTS (
-    note_name NOT NULL TEXT,
-    
+CREATE TABLE IF NOT EXISTS notebook (
+    note_name TEXT NOT NULL,
+    note      TEXT
 )
