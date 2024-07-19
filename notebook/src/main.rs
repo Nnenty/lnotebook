@@ -4,8 +4,17 @@ use anyhow::{self, Context, Ok};
 use sqlx::{self, PgPool};
 use structopt::StructOpt;
 use tokio;
+
 use tracing::{event, Level};
 use tracing_subscriber::{fmt, layer::SubscriberExt as _, util::SubscriberInitExt as _, EnvFilter};
+
+use thiserror;
+
+#[derive(thiserror::Error, Debug)]
+pub enum DataBaseError {
+    #[error("The note-name `{note_name}` is already taken; try use another note-name")]
+    AlreadyTaken { note_name: String },
+}
 
 #[derive(StructOpt)]
 pub struct Args {
@@ -33,21 +42,39 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-
 async fn add_note(note_name: &str, pool: &PgPool) -> anyhow::Result<()> {
-    let p = sqlx::query!(
+    // If db has similar note_name
+    if let Some(_) = sqlx::query!(
+        "
+SELECT *
+FROM notebook
+WHERE note_name = $1
+        ",
+        note_name
+    )
+    .fetch_optional(pool)
+    .await?
+    {
+        // Return error `AlreadyTaken`
+        return Err(DataBaseError::AlreadyTaken {
+            note_name: note_name.to_owned(),
+        }
+        .into());
+    }
+
+    let s = sqlx::query!(
         "
 INSERT INTO notebook
 VALUES ( $1, $2 )
+RETURNING note_name
         ",
         note_name,
         ""
     )
-    .execute(pool)
-    .await
-    .unwrap();
+    .fetch_one(pool)
+    .await?;
 
-    event!(Level::DEBUG, "Insert {note_name} into notebook");
+    event!(Level::DEBUG, "Insert {:?} into notebook", s.note_name);
 
     Ok(())
 }
@@ -90,7 +117,7 @@ FROM notebook
         .fetch_all(&db)
         .await?;
 
-        println!("Reading rows from db:\n{:?} from db", ret);
+        println!("Reading rows from db:\n{:?}", ret);
 
         Ok(())
     }
