@@ -29,7 +29,7 @@ pub enum Command {
     },
 }
 
-async fn print_all_data(pool: &PgPool) -> Result<PgRow, DataBaseError> {
+async fn return_first_row(pool: &PgPool) -> Result<PgRow, DataBaseError> {
     let row = sqlx::query(
         "
 SELECT * 
@@ -64,7 +64,7 @@ impl NoteCommand {
                 update_note(&notename, &new_note, pool).await
             }
 
-            None => print_all_data(pool).await,
+            None => return_first_row(pool).await,
         }
     }
 }
@@ -107,13 +107,18 @@ async fn delete_note(notename: &str, pool: &PgPool) -> Result<PgRow, DataBaseErr
         "
 DELETE FROM notebook
 WHERE note_name = '{}'
+RETURNING note_name
         ",
         notename
     );
 
     match sqlx::query(&query).fetch_one(pool).await {
         Ok(del_row) => {
-            event!(Level::DEBUG, "Delete {} from notebook", notename);
+            event!(
+                Level::DEBUG,
+                "Delete note with name `{}` from notebook",
+                notename
+            );
 
             Ok(del_row)
         }
@@ -161,8 +166,9 @@ async fn update_notename(
     let query = format!(
         "
 UPDATE notebook
-SET note_name = {}
-WHERE note_name = {}
+SET note_name = '{}'
+WHERE note_name = '{}'
+RETURNING note_name
         ",
         new_notename, notename
     );
