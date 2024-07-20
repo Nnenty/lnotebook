@@ -1,11 +1,8 @@
 prepare:
     cargo sqlx prepare -- --all-targets
 
-test--select: 
+test_print: 
     cargo test print_data_from_db -- --nocapture
-
-export_db:
-    export DATABASE_URL="postgres://admin:admin@localhost/test"
 
 new_db:
     sqlx db create && sqlx migrate run
