@@ -1,8 +1,6 @@
 prepare:
     cargo sqlx prepare -- --all-targets
 
-test_print: 
-    cargo test print_data_from_db -- --nocapture
-
-new_db:
-    sqlx db create && sqlx migrate run
+# Use this after you have specified the `DATABASE_URL`
+migrate:
+    sqlx migrate run

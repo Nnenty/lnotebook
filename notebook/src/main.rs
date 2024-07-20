@@ -1,13 +1,14 @@
 use std::env;
 
 use anyhow::{self, Ok};
+
 use sqlx::{self, PgPool};
 use tokio;
 
 use tracing::{event, Level};
 use tracing_subscriber::{fmt, layer::SubscriberExt as _, util::SubscriberInitExt as _, EnvFilter};
 
-pub mod api;
+mod api;
 use api::NoteCommand;
 
 #[tokio::main]

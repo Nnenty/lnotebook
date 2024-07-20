@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS notebook (
-    --ID        int  PRIMARY KEY--
+    id SERIAL,
     note_name TEXT UNIQUE NOT NULL,
-    note      TEXT 
+    note TEXT,
+    PRIMARY KEY (id)
 )
