@@ -1,14 +1,10 @@
-use std::env;
-
 use crate::api::errors;
 
 use errors::DataBaseError;
 
-use anyhow::{self, Context};
-use sqlx::{self, postgres::PgRow, PgPool};
-use structopt::StructOpt;
+use sqlx::{self, postgres::PgRow, PgPool, Row};
+use structopt::{clap, StructOpt};
 use tracing::{event, Level};
-use tracing_subscriber::fmt::format;
 
 #[derive(StructOpt)]
 pub struct NoteCommand {
@@ -23,44 +19,36 @@ pub enum Command {
     DelNote {
         notename: String,
     },
-    UpdateNoteName {
+    UpdNoteName {
         notename: String,
         new_notename: String,
     },
-    UpdateNote {
+    UpdNote {
         notename: String,
+        new_note: String,
     },
 }
 
-// pub async fn print_data_from_db(pool: &PgPool) -> Result<PgRow, DataBaseError> {
-//     let path = &env::var("DATABASE_URL").unwrap();
-//     let db = PgPool::connect(&path).await?;
+async fn print_all_data(pool: &PgPool) -> Result<PgRow, DataBaseError> {
+    let row = sqlx::query(
+        "
+SELECT * 
+FROM notebook
+        ",
+    )
+    .fetch_one(pool)
+    .await?;
 
-//     let row = sqlx::query(
-//         "
-// SELECT *
-// FROM notebook
-// WHERE
-// ",
-//     );
+    let display_row = row.try_column(0)?;
 
-//     let all_data = sqlx::query!(
-//         "
-// SELECT *
-// FROM notebook
-// "
-//     )
-//     .fetch_all(&db)
-//     .await?;
+    println!("All notes in notebook:\n{:?}", display_row);
 
-//     println!("Reading rows from db:\n{:?}", all_data);
-
-//     Ok(row)
-// }
+    Ok(row)
+}
 
 impl NoteCommand {
-    pub async fn new() -> anyhow::Result<Self> {
-        anyhow::Ok(NoteCommand::from_args_safe().context("could not build struct from args")?)
+    pub async fn new() -> Result<NoteCommand, clap::Error> {
+        Ok(NoteCommand::from_args_safe()?)
     }
     pub async fn execute_command(&self, pool: &PgPool) -> Result<PgRow, DataBaseError> {
         match self.cmd.as_ref() {
@@ -68,27 +56,37 @@ impl NoteCommand {
 
             Some(Command::DelNote { notename }) => delete_note(&notename, pool).await,
 
-            Some(Command::UpdateNoteName {
+            Some(Command::UpdNoteName {
                 notename,
                 new_notename,
             }) => update_notename(&notename, &new_notename, pool).await,
+            Some(Command::UpdNote { notename, new_note }) => {
+                update_note(&notename, &new_note, pool).await
+            }
 
-            Some(Command::UpdateNote { notename }) => update_note(&notename, pool).await,
-            None => Ok(()),
+            None => print_all_data(pool).await,
         }
     }
 }
-async fn add_note<'a>(notename: &str, pool: &'a PgPool) -> Result<PgRow, DataBaseError> {
+async fn add_note(notename: &str, pool: &PgPool) -> Result<PgRow, DataBaseError> {
     let query = format!(
         "
-INSERT INTO notebook
-VALUES ( {}, {} )
-            ",
-        notename, ""
+INSERT INTO notebook (note_name, note)
+VALUES ( '{notename}', '{}' )
+RETURNING (note_name, note)
+        ",
+        ""
     );
 
-    let row = match sqlx::query(&query).fetch_one(pool).await {
-        Ok(row) => row,
+    match sqlx::query(&query).fetch_one(pool).await {
+        Ok(row) => {
+            event!(
+                Level::DEBUG,
+                "Insert note with name `{}` into notebook",
+                notename
+            );
+            Ok(row)
+        }
         Err(err) => {
             if let Some(db_err) = err.as_database_error() {
                 if let Some(code) = db_err.code() {
@@ -99,27 +97,23 @@ VALUES ( {}, {} )
                     }
                 }
             }
-            return Err(err.into());
+            Err(err.into())
         }
-    };
-
-    event!(Level::DEBUG, "Insert {:?} into notebook", notename);
-
-    Ok(row)
+    }
 }
 
 async fn delete_note(notename: &str, pool: &PgPool) -> Result<PgRow, DataBaseError> {
     let query = format!(
         "
 DELETE FROM notebook
-WHERE note_name = {}
+WHERE note_name = '{}'
         ",
         notename
     );
 
     match sqlx::query(&query).fetch_one(pool).await {
         Ok(del_row) => {
-            event!(Level::DEBUG, "Delete {:?} from notebook", notename);
+            event!(Level::DEBUG, "Delete {} from notebook", notename);
 
             Ok(del_row)
         }
@@ -127,13 +121,65 @@ WHERE note_name = {}
     }
 }
 
-async fn update_note(notename: &str, pool: &PgPool) -> anyhow::Result<()> {
-    Ok(())
+async fn update_note(
+    notename: &str,
+    new_note: &str,
+    pool: &PgPool,
+) -> Result<PgRow, DataBaseError> {
+    let query = format!(
+        "
+UPDATE notebook
+SET note = '{}'
+WHERE note_name = '{}'
+RETURNING (note_name, note)
+        ",
+        new_note, notename
+    );
+
+    match sqlx::query(&query).fetch_one(pool).await {
+        Ok(upd_row) => {
+            let n = upd_row.try_column(0)?;
+
+            event!(
+                Level::DEBUG,
+                "Update `{}` note from {:?} to {}",
+                notename,
+                n,
+                new_note
+            );
+
+            Ok(upd_row)
+        }
+        Err(err) => Err(DataBaseError::Sqlx(err)),
+    }
 }
 async fn update_notename(
     notename: &str,
-    notename_to_update: &str,
+    new_notename: &str,
     pool: &PgPool,
-) -> anyhow::Result<()> {
-    Ok(())
+) -> Result<PgRow, DataBaseError> {
+    let query = format!(
+        "
+UPDATE notebook
+SET note_name = {}
+WHERE note_name = {}
+        ",
+        new_notename, notename
+    );
+
+    match sqlx::query(&query).fetch_one(pool).await {
+        Ok(upd_row) => {
+            let new_notename = upd_row.try_column(0)?;
+
+            event!(
+                Level::DEBUG,
+                "Update notename from {} to {:?}",
+                notename,
+                new_notename
+            );
+
+            Ok(upd_row)
+        }
+        Err(err) => Err(DataBaseError::Sqlx(err)),
+    }
 }

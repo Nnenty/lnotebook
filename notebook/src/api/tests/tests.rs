@@ -1,9 +1,10 @@
 use sqlx::PgPool;
+use std::env;
 
-use super::*;
+use crate::api::commands::{add_note, delete_note};
 
 #[tokio::test]
-pub async fn test_del_note() -> anyhow::Result<()> {
+async fn test_delnote() -> anyhow::Result<()> {
     let db = PgPool::connect(&env::var("DATABASE_URL")?).await?;
     let note_for_delete = "test_note_test_note".to_owned();
 
@@ -30,8 +31,11 @@ WHERE note_name = $1
         return Ok(());
     }
 
-    Err(DataBaseError::DeleteError {
-        notename: note_for_delete,
-    }
-    .into())
+    Err()
+}
+
+#[tokio::test]
+async fn test_updnote() {
+    let db = PgPool::connect(&env::var("DATABASE_URL")?).await?;
+    let note_to_update;
 }
