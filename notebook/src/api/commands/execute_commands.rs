@@ -1,6 +1,7 @@
 use crate::api::NotebookError;
 use crate::api::{
-    add_note, delete_all_notes, delete_note, print_all_data, update_note, update_notename,
+    add_note, delete_all_notes, delete_note, print_all_data, print_note, update_note,
+    update_notename,
 };
 
 use sqlx::{self, PgPool};
@@ -29,6 +30,9 @@ enum Command {
     Updnote {
         notename: String,
     },
+    Printnote {
+        notename: String,
+    },
 }
 
 impl NoteCommand {
@@ -38,9 +42,8 @@ impl NoteCommand {
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::Addnote { notename }) => {
-                println!(
-                "Enter note you want to add into `{}`\n(At the end of the note, enter #endnote to finish writing the note)",
-                notename);
+                println!("Enter note you want to add into `{}`", notename);
+                println!("(At the end of the note, enter `#endnote` on new line to finish writing the note)");
 
                 let mut note = String::new();
                 loop {
@@ -93,8 +96,10 @@ impl NoteCommand {
 
                 if yes_no.trim().to_lowercase().contains("y") {
                     println!(
-                    "Enter note you want to add instead old note into `{}`\n(At the end of the note, enter #endnote to finish writing the note)",
-                    notename);
+                        "Enter note you want to add instead old note into `{}`",
+                        notename
+                    );
+                    println!("(At the end of the note, enter `#endnote` on new line to finish writing the note)");
 
                     let mut new_note = String::new();
                     loop {
@@ -118,6 +123,10 @@ impl NoteCommand {
                 } else {
                     println!("You refused to update note");
                 }
+            }
+
+            Some(Command::Printnote { notename }) => {
+                print_note(notename, pool).await?;
             }
 
             None => {

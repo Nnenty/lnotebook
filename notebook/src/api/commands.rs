@@ -11,6 +11,39 @@ pub struct Notebook {
     pub note_name: String,
 }
 
+pub async fn print_note(notename: &str, pool: &PgPool) -> Result<Notebook, NotebookError> {
+    let row = sqlx::query!(
+        "
+SELECT *
+FROM notebook
+WHERE note_name = $1
+        ",
+        notename
+    )
+    .fetch_one(pool)
+    .await?;
+
+    let row_note = if let Some(n) = &row.note {
+        n
+    } else {
+        "#NONE-DATA#"
+    };
+
+    event!(
+        Level::INFO,
+        "Requested note:\nID: {}\nName: {}\nData:\n{}",
+        row.id,
+        row.note_name,
+        row_note
+    );
+
+    Ok(Notebook {
+        id: row.id,
+        note: row.note,
+        note_name: row.note_name,
+    })
+}
+
 pub async fn print_all_data(pool: &PgPool) -> Result<(), NotebookError> {
     let rows = sqlx::query!(
         "
@@ -21,11 +54,20 @@ FROM notebook
     .fetch_all(pool)
     .await?;
 
-    println!("All notes in notebook:");
+    event!(Level::INFO, "All notes in notebook:");
     rows.iter().for_each(|row| {
-        println!(
-            "\nNote #{}:\nName: {}\nData: {:?}",
-            row.id, row.note_name, row.note
+        let row_note = if let Some(n) = &row.note {
+            n
+        } else {
+            "#NONE-DATA#"
+        };
+
+        event!(
+            Level::INFO,
+            "\nID{}:\nName: {}\nData: {}",
+            row.id,
+            row.note_name,
+            row_note
         );
     });
 
@@ -82,18 +124,26 @@ pub async fn delete_note(notename: &str, pool: &PgPool) -> Result<(), NotebookEr
         "
 DELETE FROM notebook
 WHERE note_name = $1
-RETURNING note_name
+RETURNING id, note_name, note
         ",
         notename
     )
     .fetch_one(pool)
     .await
     {
-        Ok(_) => {
+        Ok(row) => {
+            let row_note = if let Some(n) = &row.note {
+                n
+            } else {
+                "#NONE-DATA#"
+            };
+
             event!(
                 Level::DEBUG,
-                "Delete note with name `{}` from notebook",
-                notename
+                "Delete note:\nID: #{}\nName: {}\nData:\n{}",
+                row.id,
+                notename,
+                row_note
             );
 
             Ok(())
@@ -106,7 +156,7 @@ pub async fn delete_all_notes(pool: &PgPool) -> Result<(), NotebookError> {
     match sqlx::query!(
         "
 DELETE FROM notebook
-RETURNING id, note_name
+RETURNING id, note_name, note
         "
     )
     .fetch_all(pool)
@@ -114,11 +164,18 @@ RETURNING id, note_name
     {
         Ok(del_rows) => {
             del_rows.iter().for_each(|row| {
+                let row_note = if let Some(n) = &row.note {
+                    n
+                } else {
+                    "#NONE-DATA#"
+                };
+
                 event!(
                     Level::DEBUG,
-                    "Deleting -> id: #{}; name: {} note",
+                    "Deleting ID: {}; Name: {}; Data:\n{}",
                     row.id,
-                    row.note_name
+                    row.note_name,
+                    row_note
                 )
             });
 
@@ -146,7 +203,7 @@ pub async fn update_note(
     .await
     {
         Ok(upd_row) => {
-            event!(Level::DEBUG, "Update `{}` data to: {}", notename, new_note,);
+            event!(Level::DEBUG, "Update `{}` data to:\n{}", notename, new_note,);
 
             Ok(Notebook {
                 id: upd_row.id,
