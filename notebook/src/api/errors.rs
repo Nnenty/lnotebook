@@ -4,9 +4,9 @@ pub enum NotebookError {
     AlreadyTaken { notename: String },
 
     #[error(
-        "\
-        Data base enivroment variable not specifed;\
-        \nUse `DATABASE_URL=postgres://username:password@localhost/db cargo run `notebook command`\
+        "
+Data base enivroment variable for notebook not specifed;
+Use `DATABASE_URL=postgres://username:password@localhost/db cargo run `notebook-command`
         "
     )]
     DataBaseNotSpecifed,
