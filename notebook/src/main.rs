@@ -1,5 +1,4 @@
 use anyhow;
-
 use sqlx::{self, PgPool};
 use tokio;
 

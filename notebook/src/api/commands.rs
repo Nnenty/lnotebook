@@ -1,11 +1,9 @@
-use crate::api::errors;
-
-use errors::NotebookError;
-
 use sqlx::{self, PgPool};
 use tracing::{event, Level};
 
 pub mod execute_commands;
+use crate::api::errors;
+use errors::NotebookError;
 
 pub struct Notebook {
     pub id: i32,
@@ -34,7 +32,11 @@ FROM notebook
     Ok(())
 }
 
-pub async fn add_note(notename: &str, pool: &PgPool) -> Result<Notebook, NotebookError> {
+pub async fn add_note(
+    notename: &str,
+    note: &str,
+    pool: &PgPool,
+) -> Result<Notebook, NotebookError> {
     match sqlx::query!(
         "
 INSERT INTO notebook (note_name, note)
@@ -42,7 +44,7 @@ VALUES ( $1, $2 )
 RETURNING id, note_name, note
         ",
         notename,
-        ""
+        note
     )
     .fetch_one(pool)
     .await
@@ -50,8 +52,9 @@ RETURNING id, note_name, note
         Ok(row) => {
             event!(
                 Level::DEBUG,
-                "Insert note with name `{}` into notebook",
-                notename
+                "Insert note with name `{}` with data `{}` into notebook",
+                notename,
+                note
             );
             Ok(Notebook {
                 id: row.id,
@@ -143,12 +146,7 @@ pub async fn update_note(
     .await
     {
         Ok(upd_row) => {
-            event!(
-                Level::DEBUG,
-                "Update `{}` note data to: {}",
-                notename,
-                new_note,
-            );
+            event!(Level::DEBUG, "Update `{}` data to: {}", notename, new_note,);
 
             Ok(Notebook {
                 id: upd_row.id,
