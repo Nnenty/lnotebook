@@ -1,4 +1,4 @@
-use crate::api::DataBaseError;
+use crate::api::NotebookError;
 use crate::api::{
     add_note, delete_all_notes, delete_note, print_all_data, update_note, update_notename,
 };
@@ -34,7 +34,7 @@ impl NoteCommand {
     pub async fn new() -> Result<NoteCommand, clap::Error> {
         Ok(NoteCommand::from_args_safe()?)
     }
-    pub async fn execute_command(&self, pool: &PgPool) -> Result<(), DataBaseError> {
+    pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
                 add_note(&notename, pool).await?;

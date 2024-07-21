@@ -1,6 +1,6 @@
 use crate::api::errors;
 
-use errors::DataBaseError;
+use errors::NotebookError;
 
 use sqlx::{self, PgPool};
 use tracing::{event, Level};
@@ -13,7 +13,7 @@ pub struct Notebook {
     pub note_name: String,
 }
 
-pub async fn print_all_data(pool: &PgPool) -> Result<(), DataBaseError> {
+pub async fn print_all_data(pool: &PgPool) -> Result<(), NotebookError> {
     let rows = sqlx::query!(
         "
 SELECT * 
@@ -26,7 +26,7 @@ FROM notebook
     println!("All notes in notebook:");
     rows.iter().for_each(|row| {
         println!(
-            "Note #{}:\nName: {}\nData: {:?}\n",
+            "\nNote #{}:\nName: {}\nData: {:?}",
             row.id, row.note_name, row.note
         );
     });
@@ -34,7 +34,7 @@ FROM notebook
     Ok(())
 }
 
-pub async fn add_note(notename: &str, pool: &PgPool) -> Result<Notebook, DataBaseError> {
+pub async fn add_note(notename: &str, pool: &PgPool) -> Result<Notebook, NotebookError> {
     match sqlx::query!(
         "
 INSERT INTO notebook (note_name, note)
@@ -63,7 +63,7 @@ RETURNING id, note_name, note
             if let Some(db_err) = err.as_database_error() {
                 if let Some(code) = db_err.code() {
                     if code == "23505" {
-                        return Err(DataBaseError::AlreadyTaken {
+                        return Err(NotebookError::AlreadyTaken {
                             notename: notename.to_owned(),
                         });
                     }
@@ -74,7 +74,7 @@ RETURNING id, note_name, note
     }
 }
 
-pub async fn delete_note(notename: &str, pool: &PgPool) -> Result<(), DataBaseError> {
+pub async fn delete_note(notename: &str, pool: &PgPool) -> Result<(), NotebookError> {
     match sqlx::query!(
         "
 DELETE FROM notebook
@@ -95,11 +95,11 @@ RETURNING note_name
 
             Ok(())
         }
-        Err(err) => Err(DataBaseError::Sqlx(err)),
+        Err(err) => Err(NotebookError::Sqlx(err)),
     }
 }
 
-pub async fn delete_all_notes(pool: &PgPool) -> Result<(), DataBaseError> {
+pub async fn delete_all_notes(pool: &PgPool) -> Result<(), NotebookError> {
     match sqlx::query!(
         "
 DELETE FROM notebook
@@ -113,7 +113,7 @@ RETURNING id, note_name
             del_rows.iter().for_each(|row| {
                 event!(
                     Level::DEBUG,
-                    "Deleting id: #{}; name: {} note",
+                    "Deleting -> id: #{}; name: {} note",
                     row.id,
                     row.note_name
                 )
@@ -121,7 +121,7 @@ RETURNING id, note_name
 
             Ok(())
         }
-        Err(err) => Err(DataBaseError::Sqlx(err)),
+        Err(err) => Err(NotebookError::Sqlx(err)),
     }
 }
 
@@ -129,7 +129,7 @@ pub async fn update_note(
     notename: &str,
     new_note: &str,
     pool: &PgPool,
-) -> Result<Notebook, DataBaseError> {
+) -> Result<Notebook, NotebookError> {
     match sqlx::query!(
         "UPDATE notebook
         SET note = $1
@@ -156,14 +156,14 @@ pub async fn update_note(
                 note: upd_row.note,
             })
         }
-        Err(err) => Err(DataBaseError::Sqlx(err)),
+        Err(err) => Err(NotebookError::Sqlx(err)),
     }
 }
 pub async fn update_notename(
     notename: &str,
     new_notename: &str,
     pool: &PgPool,
-) -> Result<Notebook, DataBaseError> {
+) -> Result<Notebook, NotebookError> {
     match sqlx::query!(
         "
 UPDATE notebook
@@ -191,6 +191,6 @@ RETURNING id, note_name, note
                 note: upd_row.note,
             })
         }
-        Err(err) => Err(DataBaseError::Sqlx(err)),
+        Err(err) => Err(NotebookError::Sqlx(err)),
     }
 }

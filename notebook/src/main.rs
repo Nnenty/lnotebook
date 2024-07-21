@@ -1,6 +1,4 @@
-use std::env;
-
-use anyhow::{self, Ok};
+use anyhow;
 
 use sqlx::{self, PgPool};
 use tokio;
@@ -9,7 +7,7 @@ use tracing::{event, Level};
 use tracing_subscriber::{fmt, layer::SubscriberExt as _, util::SubscriberInitExt as _, EnvFilter};
 
 mod api;
-use api::NoteCommand;
+use api::{get_db_url, NoteCommand};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -18,7 +16,9 @@ async fn main() -> anyhow::Result<()> {
         .with(EnvFilter::new("debug"))
         .init();
 
-    let db = PgPool::connect(&env::var("DATABASE_URL")?).await?;
+    let db_url = get_db_url().await?;
+
+    let db = PgPool::connect(&db_url).await?;
 
     event!(Level::DEBUG, "Connect to db");
 
