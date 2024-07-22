@@ -1,2 +1,4 @@
 [workspace]
 members = ["notebook_api", "notebook_main"]
+default-members = ["notebook_api", "notebook_main"]
+resolver = "2"

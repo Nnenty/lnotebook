@@ -1,3 +1,7 @@
+//! # Notebook_main
+//! `Notebook_main` is binary file to run notebook_api, that creates
+//! as example of use `notebook_api`. You can rewrite it as you need
+
 use anyhow;
 use sqlx::{self, PgPool};
 use tokio;
@@ -15,13 +19,17 @@ async fn main() -> anyhow::Result<()> {
         .with(EnvFilter::new("debug"))
         .init();
 
+    // Get database url from enivroment variable
     let db_url = get_db_url().await?;
 
+    // Connecting to database
     let db = PgPool::connect(&db_url).await?;
 
     event!(Level::DEBUG, "Connect to db");
 
+    // Converting command from environment variable to NoteCommand option
     let a = NoteCommand::new().await?;
+    // Execute the selected command
     a.execute_command(&db).await?;
 
     event!(Level::DEBUG, "Command executed");

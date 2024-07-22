@@ -1,9 +1,13 @@
-use sqlx::{self, PgPool};
-use tracing::{event, Level};
+//! Module containing commands you can run to control the notebook
 
 pub mod execute_commands;
+pub use execute_commands::NoteCommand;
+
 use crate::errors;
 use errors::NotebookError;
+
+use sqlx::{self, PgPool};
+use tracing::{event, Level};
 
 pub struct Notebook {
     pub id: i32,

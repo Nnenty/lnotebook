@@ -1,9 +1,8 @@
+//! # Notebook_api
+//! `Notebook_api` is an API for creating notebooks that store notes in a database.
+
 pub mod commands;
 pub use commands::execute_commands::NoteCommand;
-pub use commands::{
-    add_note, delete_all_notes, delete_note, print_all_data, print_note, update_note,
-    update_notename,
-};
 
 pub mod errors;
 pub use errors::NotebookError;
