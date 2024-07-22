@@ -1,4 +1,4 @@
-//! Thist module containing commands you can run to control the notebook
+//! This module containing commands you can run to control the notebook
 
 pub mod execute_commands;
 use crate::errors;
@@ -30,22 +30,22 @@ pub struct Notebook {
     pub note_name: String,
 }
 
-/// This is `function` that displays the requested note
+/// Displays the requested note
 /// ### Returns
 /// * Ok
 ///     * Returns the printed [note of `Notebook` type][Notebook]
 /// * Errors
-///     * Returns [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
-/// enivroment variable `DATABASE_URL`
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
 /// async fn print_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
-///    let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+///     let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
 ///
 ///    // Print and return `Notebook`
-///    let row = print_note(&row.note_name, pool).await?;
+///     let row = print_note(&row.note_name, pool).await?;
 ///
 ///     assert_eq!("early_sleep", row.note_name);
+///
 ///     Ok(row)
 /// }
 /// ```
@@ -61,11 +61,7 @@ WHERE note_name = $1
     .fetch_one(pool)
     .await?;
 
-    let row_note = if let Some(n) = &row.note {
-        n
-    } else {
-        "#NONE-DATA#"
-    };
+    let row_note = if let Some(n) = &row.note { n } else { "" };
 
     event!(
         Level::INFO,
@@ -82,6 +78,10 @@ WHERE note_name = $1
     })
 }
 
+/// Displays all total notes in notebook
+/// ### Returns
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 pub async fn print_all_data(pool: &PgPool) -> Result<(), NotebookError> {
     let rows = sqlx::query!(
         "
@@ -94,11 +94,7 @@ FROM notebook
 
     event!(Level::INFO, "All notes in notebook:");
     rows.iter().for_each(|row| {
-        let row_note = if let Some(n) = &row.note {
-            n
-        } else {
-            "#NONE-DATA#"
-        };
+        let row_note = if let Some(n) = &row.note { n } else { "" };
 
         event!(
             Level::INFO,
@@ -112,6 +108,24 @@ FROM notebook
     Ok(())
 }
 
+/// Adds a new note to notebook
+/// ### Returns
+/// * Ok
+///     * [note of `Notebook` type][Notebook] that was added into notebook
+/// * Errors
+///     * [`NotebookError::AlreadyTaken`] if a note with the same name already exists
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// if any other [`sqlx::Error`] occurs
+/// ### Example
+/// ```rust,no run
+/// async fn add_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+///
+///     assert_eq!("I'll go to bed early today", row.note);
+///
+///     Ok(row)
+/// }
+/// ```
 pub async fn add_note(
     notename: &str,
     note: &str,
@@ -157,6 +171,23 @@ RETURNING id, note_name, note
     }
 }
 
+/// Removing the requested note
+/// ### Returns
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// ### Example
+/// ```rust,no run
+/// async fn remove_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note("bad_cat", "Buy new slippers. the old ones were ruined by the cat", pool).await?;
+///
+///     delete_note(&row.note_name, pool).await?;
+///
+///     // Should return error because note `bad_cat` is not exist
+///     print_note(&row.note_name, pool).await?;
+///
+///     Ok(row)
+/// }
+/// ```
 pub async fn delete_note(notename: &str, pool: &PgPool) -> Result<(), NotebookError> {
     match sqlx::query!(
         "
@@ -170,11 +201,7 @@ RETURNING id, note_name, note
     .await
     {
         Ok(row) => {
-            let row_note = if let Some(n) = &row.note {
-                n
-            } else {
-                "#NONE-DATA#"
-            };
+            let row_note = if let Some(n) = &row.note { n } else { "" };
 
             event!(
                 Level::DEBUG,
@@ -202,11 +229,7 @@ RETURNING id, note_name, note
     {
         Ok(del_rows) => {
             del_rows.iter().for_each(|row| {
-                let row_note = if let Some(n) = &row.note {
-                    n
-                } else {
-                    "#NONE-DATA#"
-                };
+                let row_note = if let Some(n) = &row.note { n } else { "" };
 
                 event!(
                     Level::DEBUG,

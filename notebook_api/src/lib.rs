@@ -18,6 +18,17 @@ use std::env;
 /// enivroment variable `DATABASE_URL`
 ///     * Returns [`NotebookError::VarError`] error from [`env::VarError`]
 /// if any other [`env::VarError`] occurs
+/// ### Example
+/// ```
+/// async fn get_url_example() -> Result<Notebook, NotebookError> {
+///     // This will only work if you specified `DATABASE_URL`
+///     let db = get_db_url().await?;
+///     
+///     assert_eq(db, "postgres://your_usname:your_password@localhost/your_db");
+///
+///     Ok(row)
+/// }
+/// ```
 pub async fn get_db_url() -> Result<String, NotebookError> {
     let ret_db = match env::var("DATABASE_URL") {
         Ok(ok_db) => ok_db,
