@@ -19,7 +19,7 @@ async fn main() -> anyhow::Result<()> {
         .with(EnvFilter::new("debug"))
         .init();
 
-    // Get database url from enivroment variable
+    // Get database URL from enivroment variable
     let db_url = get_db_url().await?;
 
     // Connecting to database
@@ -32,7 +32,7 @@ async fn main() -> anyhow::Result<()> {
     // Execute the selected command
     a.execute_command(&db).await?;
 
-    event!(Level::DEBUG, "Command executed");
+    event!(Level::DEBUG, "Command executed to ");
 
     Ok(())
 }

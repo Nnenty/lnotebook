@@ -1,4 +1,4 @@
-//! Module containing commands you can run to control the notebook
+//! Thist module containing commands you can run to control the notebook
 
 pub mod execute_commands;
 pub use execute_commands::NoteCommand;
@@ -9,6 +9,22 @@ use errors::NotebookError;
 use sqlx::{self, PgPool};
 use tracing::{event, Level};
 
+/// The `struct` that returned by functions in [`command` module][`crate::commands`]
+///
+/// Functions that return it:
+/// * [`add_note`][add_note]
+/// * [`update_note`][update_note]
+/// * [`update_notename`][update_notename]
+/// * [`print_note`][print_note]
+/// ### Example
+/// ```rust,no run
+/// async fn example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note(
+///     "early_sleep", "I'll go to bed early today", pool)
+///     .await?;
+///     
+///     assert_eq!("early_sleep", row.notename);
+/// }
 pub struct Notebook {
     pub id: i32,
     pub note: Option<String>,
