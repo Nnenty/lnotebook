@@ -3,7 +3,6 @@
 
 pub mod commands;
 pub use commands::execute_commands::NoteCommand;
-
 pub mod errors;
 pub use errors::NotebookError;
 

@@ -10,7 +10,7 @@ use tracing::{event, Level};
 
 /// This is `struct` that returned by functions in [`command` module][`crate::commands`]
 ///
-/// Functions that return it:
+/// `functions` that return it:
 /// * [`add_note`][add_note]
 /// * [`update_note`][update_note]
 /// * [`update_notename`][update_notename]
@@ -18,6 +18,7 @@ use tracing::{event, Level};
 /// ### Example
 /// ```rust,no run
 /// async fn struct_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     // `add_note()` returns `struct Notebook` that we can use as we wish
 ///     let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
 ///
 ///     assert_eq!("early_sleep", row.note_name);
@@ -33,18 +34,18 @@ pub struct Notebook {
 /// Displays the requested note
 /// ### Returns
 /// * Ok
-///     * Returns the printed [note of `Notebook` type][Notebook]
+///     * Returns the displayed [note of `Notebook` type][Notebook]
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
 /// async fn print_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
-///     let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+///     let row = add_note("med_evn", "Meditate in the evening", pool).await?;
 ///
-///    // Print and return `Notebook`
-///     let row = print_note(&row.note_name, pool).await?;
+///     // Display and return `Notebook` that was displayed
+///     let check_similar = print_note(&row.note_name, pool).await?;
 ///
-///     assert_eq!("early_sleep", row.note_name);
+///     assert_eq!(check_similar.note_name, row.note_name);
 ///
 ///     Ok(row)
 /// }
@@ -113,15 +114,15 @@ FROM notebook
 /// * Ok
 ///     * [note of `Notebook` type][Notebook] that was added into notebook
 /// * Errors
-///     * [`NotebookError::AlreadyTaken`] if a note with the same name already exists
+///     * [`NotebookError::AlreadyTaken`] error if a note with the same name already exists
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// if any other [`sqlx::Error`] occurs
 /// ### Example
 /// ```rust,no run
 /// async fn add_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
-///     let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+///     let row = add_note("add_note", "Added a little note so you don't forget", pool).await?;
 ///
-///     assert_eq!("I'll go to bed early today", row.note);
+///     assert_eq!("add_note", row.note_name);
 ///
 ///     Ok(row)
 /// }
@@ -171,14 +172,14 @@ RETURNING id, note_name, note
     }
 }
 
-/// Removing the requested note
+/// Deleting the requested note
 /// ### Returns
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
-/// async fn remove_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
-///     let row = add_note("bad_cat", "Buy new slippers. the old ones were ruined by the cat", pool).await?;
+/// async fn delete_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note("bad_cat", "Buy new slippers. The old ones were ruined by the cat", pool).await?;
 ///
 ///     delete_note(&row.note_name, pool).await?;
 ///
@@ -217,6 +218,25 @@ RETURNING id, note_name, note
     }
 }
 
+/// Deleting all total notes in notebook
+/// ### Returns
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// ### Example
+/// ```rust,no run
+/// async fn delete_all_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     add_note("bad_cat", "Buy new slippers. the old ones were ruined by the cat", pool).await?;
+///     add_note("cool_cat", "Don't forget to post a photo of my cool cat", pool).await?;
+///     add_note("empty", "", pool).await?;
+///
+///     delete_all_notes(pool).await?;
+///
+///     // Should display empty list
+///     print_all_notes(pool).await?;
+///
+///     Ok(row)
+/// }
+/// ```
 pub async fn delete_all_notes(pool: &PgPool) -> Result<(), NotebookError> {
     match sqlx::query!(
         "
@@ -246,6 +266,28 @@ RETURNING id, note_name, note
     }
 }
 
+/// Updating old note to new note
+/// ### Returns
+/// * Ok
+///     * [note of `Notebook` type][Notebook] that was updated
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// ### Example
+/// ```rust,no run
+/// async fn update_note_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note("wrong_note", "Thos is erong nlte", pool).await?;
+///     let row_note = if let Some(n) = row.note { n } else { "" };
+///
+///     assert_eq!("Thos is erong nlte", row_note);
+///
+///     let upd_row = update_note("wrong_note", "This is NOT wrong note");
+///     let upd_row_note = if let Some(n) = upd_row.note { n } else { "" };
+///
+///      assert_eq!("This is NOT wrong note", upd_row_note);
+///
+///     Ok(row)
+/// }
+/// ```
 pub async fn update_note(
     notename: &str,
     new_note: &str,
@@ -275,6 +317,27 @@ pub async fn update_note(
         Err(err) => Err(NotebookError::Sqlx(err)),
     }
 }
+
+/// Updating old notename to new notename
+/// ### Returns
+/// * Ok
+///     * [note of `Notebook` type][Notebook] that was updated
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// ### Example
+/// ```rust,no run
+/// async fn update_notename_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note("wrlng_nptenAme", "", pool).await?;
+///
+///     assert_eq!("wrlng_nptenAme", row.note_name);
+///
+///     let upd_row = update_note_name("wrlng_nptenAme", "not_wrong_name");
+///
+///     assert_eq!("not_wrong_name", upd_row_note);
+///
+///     Ok(row)
+/// }
+/// ```
 pub async fn update_notename(
     notename: &str,
     new_notename: &str,
