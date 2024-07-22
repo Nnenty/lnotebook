@@ -2,7 +2,7 @@ use sqlx::{self, PgPool};
 use tracing::{event, Level};
 
 pub mod execute_commands;
-use crate::api::errors;
+use crate::errors;
 use errors::NotebookError;
 
 pub struct Notebook {
@@ -64,7 +64,7 @@ FROM notebook
 
         event!(
             Level::INFO,
-            "\nID{}:\nName: {}\nData: {}",
+            "\nID: {}:\nName: {}\nData: {}",
             row.id,
             row.note_name,
             row_note

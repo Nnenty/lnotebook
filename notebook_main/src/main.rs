@@ -5,8 +5,8 @@ use tokio;
 use tracing::{event, Level};
 use tracing_subscriber::{fmt, layer::SubscriberExt as _, util::SubscriberInitExt as _, EnvFilter};
 
-mod api;
-use api::{get_db_url, NoteCommand};
+use notebook_api;
+use notebook_api::{get_db_url, NoteCommand};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

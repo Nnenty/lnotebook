@@ -6,8 +6,7 @@ pub enum NotebookError {
     #[error(
         "
 Data base enivroment variable for notebook not specifed;
-Use `DATABASE_URL=postgres://username:password@localhost/db cargo run `notebook-command`
-        "
+Use `DATABASE_URL=postgres://username:password@localhost/db cargo run `notebook-command`"
     )]
     DataBaseNotSpecifed,
 

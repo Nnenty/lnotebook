@@ -1,0 +1,13 @@
+[package]
+name = "notebook_api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlx = { version = "0.7", features = [ "runtime-tokio", "postgres" ] }
+tokio = { version = "1.38", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] } 
+anyhow = "1.0"
+structopt = "0.3"
+thiserror = "1.0"

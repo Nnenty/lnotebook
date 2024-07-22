@@ -1,5 +1,5 @@
-use crate::api::NotebookError;
-use crate::api::{
+use crate::errors::NotebookError;
+use crate::{
     add_note, delete_all_notes, delete_note, print_all_data, print_note, update_note,
     update_notename,
 };

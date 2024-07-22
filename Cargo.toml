@@ -1,0 +1,2 @@
+[workspace]
+members = ["notebook_api", "notebook_main"]
