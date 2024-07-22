@@ -14,10 +14,10 @@ use std::env;
 /// * Ok
 ///     * Returns the database URL as a `String`
 /// * Errors
-///     * Returns [`NotebookError::DataBaseNotSpecifed`][NotebookError] error if you didn't specify the database in the
+///     * Returns [`NotebookError::DataBaseNotSpecifed`] error if you didn't specify the database in the
 /// enivroment variable `DATABASE_URL`
-///     * Returns [`NotebookError::VarError`][NotebookError] error from [`VarError`][env::VarError]
-/// if any other [`VarError`][env::VarError] occurs
+///     * Returns [`NotebookError::VarError`] error from [`env::VarError`]
+/// if any other [`env::VarError`] occurs
 pub async fn get_db_url() -> Result<String, NotebookError> {
     let ret_db = match env::var("DATABASE_URL") {
         Ok(ok_db) => ok_db,

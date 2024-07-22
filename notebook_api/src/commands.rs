@@ -1,15 +1,14 @@
 //! Thist module containing commands you can run to control the notebook
 
 pub mod execute_commands;
-pub use execute_commands::NoteCommand;
-
 use crate::errors;
 use errors::NotebookError;
+pub use execute_commands::NoteCommand;
 
 use sqlx::{self, PgPool};
 use tracing::{event, Level};
 
-/// The `struct` that returned by functions in [`command` module][`crate::commands`]
+/// This is `struct` that returned by functions in [`command` module][`crate::commands`]
 ///
 /// Functions that return it:
 /// * [`add_note`][add_note]
@@ -18,12 +17,12 @@ use tracing::{event, Level};
 /// * [`print_note`][print_note]
 /// ### Example
 /// ```rust,no run
-/// async fn example(pool: &PgPool) -> Result<Notebook, NotebookError> {
-///     let row = add_note(
-///     "early_sleep", "I'll go to bed early today", pool)
-///     .await?;
-///     
-///     assert_eq!("early_sleep", row.notename);
+/// async fn struct_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///     let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+///
+///     assert_eq!("early_sleep", row.note_name);
+///
+///     Ok(row)
 /// }
 pub struct Notebook {
     pub id: i32,
@@ -31,6 +30,25 @@ pub struct Notebook {
     pub note_name: String,
 }
 
+/// This is `function` that displays the requested note
+/// ### Returns
+/// * Ok
+///     * Returns the printed [note of `Notebook` type][Notebook]
+/// * Errors
+///     * Returns [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// enivroment variable `DATABASE_URL`
+/// ### Example
+/// ```rust,no run
+/// async fn print_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+///    let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+///
+///    // Print and return `Notebook`
+///    let row = print_note(&row.note_name, pool).await?;
+///
+///     assert_eq!("early_sleep", row.note_name);
+///     Ok(row)
+/// }
+/// ```
 pub async fn print_note(notename: &str, pool: &PgPool) -> Result<Notebook, NotebookError> {
     let row = sqlx::query!(
         "

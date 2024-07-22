@@ -32,7 +32,7 @@ async fn main() -> anyhow::Result<()> {
     // Execute the selected command
     a.execute_command(&db).await?;
 
-    event!(Level::DEBUG, "Command executed to ");
+    event!(Level::DEBUG, "Command executed");
 
     Ok(())
 }

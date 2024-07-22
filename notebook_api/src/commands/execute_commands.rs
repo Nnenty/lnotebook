@@ -129,10 +129,22 @@ impl NoteCommand {
             }
 
             None => {
-                print_all_data(pool).await?;
-            }
-        };
+                use crate::commands::Notebook;
 
+                async fn print_example(pool: &PgPool) -> Result<Notebook, NotebookError> {
+                    let row = add_note("early_sleep", "I'll go to bed early today", pool).await?;
+
+                    // Print and return `Notebook`
+                    let row = print_note(&row.note_name, pool).await?;
+
+                    assert_eq!("early_sleep", row.note_name);
+
+                    Ok(row)
+                }
+
+                print_example(pool).await?;
+            }
+        }
         Ok(())
     }
 }
