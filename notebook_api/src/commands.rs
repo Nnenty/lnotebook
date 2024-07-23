@@ -1,4 +1,4 @@
-//! This module containing commands you can run to control the notebook
+//! This module containing commands you can run to control the notebook.
 
 pub mod execute_commands;
 use crate::errors;
@@ -31,7 +31,7 @@ pub struct Note {
     pub note_name: String,
 }
 
-/// Displays and return the requested note
+/// Displays and return the requested note.
 /// ### Returns
 /// * Ok
 ///     * [`Note`]
@@ -79,7 +79,7 @@ WHERE note_name = $1
     })
 }
 
-/// Displays all total notes in notebook
+/// Displays all total notes in notebook.
 /// ### Returns
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
@@ -109,7 +109,7 @@ FROM notebook
     Ok(())
 }
 
-/// Adds and returns a new note to notebook
+/// Adds and returns a new note to notebook.
 /// ### Returns
 /// * Ok
 ///     * [Note] that was added into notebook
@@ -169,7 +169,7 @@ RETURNING id, note_name, note
     }
 }
 
-/// Deletes the requested note
+/// Deletes the requested note.
 /// ### Returns
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
@@ -215,7 +215,7 @@ RETURNING id, note_name, note
     }
 }
 
-/// Deletes all total notes in notebook
+/// Deletes all total notes in notebook.
 /// ### Returns
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
@@ -274,7 +274,7 @@ RETURNING id, note_name, note
     }
 }
 
-/// Updates note and returns updated note
+/// Updates note and returns updated note.
 /// ### Returns
 /// * Ok
 ///     * [Note] that was updated
@@ -321,7 +321,7 @@ pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, 
     }
 }
 
-/// Updates notename and returns note that name was updated
+/// Updates notename and returns note that name was updated.
 /// ### Returns
 /// * Ok
 ///     * [Note] that name was updated

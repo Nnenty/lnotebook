@@ -1,3 +1,12 @@
+//! In this module commands from [`commands module`][crate::commands]
+//! executes using environment variables.
+//!
+//! If you don't like method with enivronment variables
+//! for some reason or this module is not suitable for you,
+//! you can easily write a commands-executor yourself as you like,
+//! sometimes looking into this module if something in [`notebook_api`][crate]
+//! is not clear to you
+
 use crate::commands::{add, del, del_all, display, display_all, upd, upd_notename};
 use crate::errors::NotebookError;
 use sqlx::{self, PgPool};
@@ -51,7 +60,7 @@ impl NoteCommand {
                         process::exit(1);
                     });
 
-                    if check_end.contains("#endnote") {
+                    if check_end.contains("#endnote#") {
                         break;
                     }
 
@@ -94,7 +103,7 @@ impl NoteCommand {
                         process::exit(1);
                     });
 
-                    if check_end.contains("#endnote") {
+                    if check_end.contains("#endnote#") {
                         break;
                     }
 

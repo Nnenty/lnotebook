@@ -8,7 +8,7 @@ pub use errors::NotebookError;
 
 use std::env;
 
-/// Gets database URL drom enivroment variable `DATABASE_URL`
+/// Gets database URL drom enivroment variable `DATABASE_URL`.
 /// ### Returns
 /// * Ok
 ///     * Returns the database URL as a `String`
