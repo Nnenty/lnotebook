@@ -34,7 +34,7 @@ pub async fn get_db_url() -> Result<String, NotebookError> {
 
         Err(db_err) => {
             if db_err == env::VarError::NotPresent {
-                return Err(NotebookError::DataBaseNotSpecifed);
+                return Err(NotebookError::DatabaseNotSpecifed);
             }
 
             return Err(NotebookError::VarError(db_err));

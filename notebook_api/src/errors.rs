@@ -7,7 +7,7 @@ pub enum NotebookError {
         "Data base enivroment variable for notebook not specifed;
 Use `DATABASE_URL=postgres://username:password@localhost/db cargo run `notebook-command`"
     )]
-    DataBaseNotSpecifed,
+    DatabaseNotSpecifed,
 
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
