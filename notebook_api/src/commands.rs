@@ -34,7 +34,7 @@ pub struct Note {
 /// Displays and return the requested note
 /// ### Returns
 /// * Ok
-///     * [`Note`][Note]
+///     * [`Note`]
 /// * Errors
 ///     * [`NotebookError::Sqlx`] error from [`sqlx::Error`]
 /// ### Example
@@ -112,7 +112,7 @@ FROM notebook
 /// Adds and returns a new note to notebook
 /// ### Returns
 /// * Ok
-///     * [Note][Note] that was added into notebook
+///     * [Note] that was added into notebook
 /// * Errors
 ///     * [`NotebookError::AlreadyTaken`] error if a note with the same name already exists
 ///     * [`NotebookError::Sqlx`] error from [`sqlx::Error`]
@@ -274,10 +274,10 @@ RETURNING id, note_name, note
     }
 }
 
-/// Updates old note to new note and returns updated note
+/// Updates note and returns updated note
 /// ### Returns
 /// * Ok
-///     * [Note][Note] that was updated
+///     * [Note] that was updated
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
@@ -321,10 +321,10 @@ pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, 
     }
 }
 
-/// Updates old notename and returns note that name was updated
+/// Updates notename and returns note that name was updated
 /// ### Returns
 /// * Ok
-///     * [Note][Note] that name was updated
+///     * [Note] that name was updated
 /// * Errors
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example

@@ -3,7 +3,7 @@ name = "notebook_main"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/Nnenty/notebook"
+repository = "https://github.com/Nnenty/notebook_api"
 description = "Binary file to run notebook"
 
 [dependencies]

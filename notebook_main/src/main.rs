@@ -1,6 +1,6 @@
 //! # Notebook_main
-//! `Notebook_main` is binary file to run notebook_api, that creates
-//! as example of use `notebook_api`. You can rewrite it as you need
+//! `Notebook_main` is binary file to run [`notebook API`][crate].
+//! This file is just one of many use cases for [`notebook API`][crate]
 
 use anyhow;
 use sqlx::{self, PgPool};

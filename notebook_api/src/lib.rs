@@ -1,5 +1,5 @@
 //! # Notebook_api
-//! `Notebook_api` is an API for creating notebooks that store notes in a database.
+//! `Notebook_api` is an asynchronous API for creating notebooks that store notes in a database.
 
 pub mod commands;
 pub use commands::execute_commands::NoteCommand;
@@ -13,7 +13,7 @@ use std::env;
 /// * Ok
 ///     * Returns the database URL as a `String`
 /// * Errors
-///     * Returns [`NotebookError::DataBaseNotSpecifed`] error if you didn't specify the database in the
+///     * Returns [`NotebookError::DatabaseNotSpecifed`] error if you didn't specify the database in the
 /// enivroment variable `DATABASE_URL`
 ///     * Returns [`NotebookError::VarError`] error from [`env::VarError`]
 /// if any other [`env::VarError`] occurs

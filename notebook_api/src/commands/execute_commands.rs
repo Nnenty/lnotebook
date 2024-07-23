@@ -110,19 +110,7 @@ impl NoteCommand {
             }
 
             None => {
-                use crate::commands::Note;
-
-                async fn upd_notename_example(pool: &PgPool) -> Result<Note, NotebookError> {
-                    add("wrlng_nptenAme", "", pool).await?;
-
-                    // Returns updated notename
-                    let upd_row = upd_notename("wrlng_nptenAme", "not_wrong_name", pool).await?;
-
-                    assert_eq!("not_wrong_name", upd_row.note_name);
-
-                    Ok(upd_row)
-                }
-                upd_notename_example(pool).await?;
+                display_all(pool).await?;
             }
         }
         Ok(())
