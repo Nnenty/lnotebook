@@ -8,18 +8,64 @@
 //! is not clear to you.
 //!
 //! ### How use commands
-//! To use these commands you must enter
-//! ```
+//! To use these commands you must use:
+//! ```bash
 //! cargo run -- `your-command`
 //! ```
 //! List of all commands:
-//! * `add-note <notename>`- prompts to enter new note that will be added to the notebook under `notename`.
+//! * `add-note <notename>` - will prompt to enter new note that will be added to the notebook under `notename`.
 //! * `del-note <notename>` - deletes note with `notename` if it exist.
 //! * `del-all` - deletes all total notes from the notebook.
-//! * `upd-note <notename>` - prompts to enter a note that will be added instead old note in `notename`.
+//! * `upd-note <notename>` - will prompt to enter a note that will be added instead old note in `notename`.
 //! * `upd-notename <new notename>` - updates old notename to new `notename` of requested note.
 //! * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
 //! * If you did not specify which command to execute, then all total notes will be displayed.
+//!
+//! #### Examples
+//! Code under deletes 'unnecessary_note' if it exists:
+//! ```bash
+//! cargo run -- del-note unnecessary_note
+//! ```
+//!
+//! Сommands such as `add-note` and `del-note` after entering `cargo run ...`
+//! will prompt you to enter a new note. To finish write note you
+//! should write `#endnote#` at the end, as written in the tooltip.
+//! For example the code below will update the 'passwords' note to
+//! 'login: krutoy_4el\npassword: 123' if note exists:
+//! ```bash
+//! cargo run -- upd-note passwords
+//!
+//! # output
+//! Enter note you want to add instead old note in `passwords`
+//! (At the end of the note, enter `#endnote#` to finish writing the note):
+//!
+//! # input
+//! login: krutoy_4el
+//! password: 1234
+//! #endnote#
+//!
+//! # output
+//! Note to add into `passwords`:
+//! login: krutoy_4el
+//! password: 123
+//! ```
+//! Let's display full info about this note.
+//!
+//! If you did not specify which command to execute, then all total notes will be displayed.
+//! You also can use `display-note` to display it, but for a variety we will do it like in the code below:
+//! ```bash
+//! cargo run
+//!
+//! # output
+//! All notes in notebook:
+//! ID: 1
+//! Name: passwords
+//! Data:
+//! login: krutoy_4el
+//! password: 123
+//! ```
+//! If there were more notes here, they would all be displayed, but since we only have one note, we only got that one.
+
 use crate::commands::{add, del, del_all, display, display_all, upd, upd_notename};
 use crate::errors::NotebookError;
 use sqlx::{self, PgPool};
@@ -30,7 +76,7 @@ use tracing::{event, Level};
 /// Contains the command as `enum` from the environment variable to run it later.
 ///
 /// This `struct` was created to conveniently store and execute commands on a notebook from enivronment variables.
-/// More about these commands [here][crate::commands::execute_commands]
+/// More about the commands for which this structure was created [here][crate::commands::execute_commands].
 #[derive(StructOpt)]
 pub struct NoteCommand {
     #[structopt(subcommand)]
@@ -45,12 +91,14 @@ enum Command {
     DelNote {
         notename: String,
     },
+
     DelAll,
 
     UpdNotename {
         notename: String,
         new_notename: String,
     },
+
     UpdNote {
         notename: String,
     },
@@ -73,12 +121,12 @@ impl NoteCommand {
     /// Execute specifed command
     ///
     /// List of all commands:
-    /// * `add-note`- prompts to enter a note that will be added to the notebook if no [errors][crate::errors] occurs.
-    /// * `del-note` - deletes requested note if it exist using.
+    /// * `add-note <notename>`- prompts to enter new note that will be added to the notebook under `notename`.
+    /// * `del-note <notename>` - deletes note with `notename` if it exist.
     /// * `del-all` - deletes all total notes from the notebook.
-    /// * `upd-note` - update only `note` of requested note.
-    /// * `upd-notename` - update only `notename` of requested note.
-    /// * `display-note` - display `notename`, `note` and note-`id` of requested note.
+    /// * `upd-note <notename>` - prompts to enter a note that will be added instead old note in `notename`.
+    /// * `upd-notename <new notename>` - updates old notename to `new notename` of requested note.
+    /// * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
     /// * If you did not specify which command to execute, then all total notes will be displayed.
     ///
     /// More about these commands [here][crate::commands::execute_commands]
@@ -86,7 +134,7 @@ impl NoteCommand {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
                 println!("Enter note you want to add into `{}`", notename);
-                println!("(At the end of the note, enter `#endnote` on new line to finish writing the note)");
+                println!("(At the end of the note, enter `#endnote#` to finish writing the note):");
 
                 let mut note = String::new();
                 loop {
@@ -126,10 +174,10 @@ impl NoteCommand {
 
             Some(Command::UpdNote { notename }) => {
                 println!(
-                    "Enter note you want to add instead old note into `{}`",
+                    "Enter note you want to add instead old note in `{}`",
                     notename
                 );
-                println!("(At the end of the note, enter `#endnote` on new line to finish writing the note)");
+                println!("(At the end of the note, enter `#endnote#` to finish writing the note):");
 
                 let mut new_note = String::new();
                 loop {
