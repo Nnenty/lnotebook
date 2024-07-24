@@ -3,4 +3,4 @@ prepare:
 
 # Use this after you have specified the `DATABASE_URL`
 migrate:
-    cd ../notebook_api && sqlx migrate run
+    cd ../lnotebook_api && sqlx migrate run

@@ -1,2 +1,2 @@
-<h1 align ="center">Notebook_api</h1>
+<h1 align ="center">LNotebook</h1>
 <div align ="center">

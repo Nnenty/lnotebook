@@ -1,5 +1,4 @@
 //! This module containing commands you can run to control the notebook.
-
 pub mod execute_commands;
 use crate::errors;
 use errors::NotebookError;
