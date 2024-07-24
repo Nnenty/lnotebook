@@ -59,7 +59,7 @@ impl NoteCommand {
     /// * [`upd-note`][Command::UpdNote] - update only notename of requested note.
     /// * [`upd-notename`][Command::UpdNotename] - update only note of requested note.
     /// * [`display-note`][Command::DisplayNote] - display requested `notename`, `note` and note-`id`.
-    /// * If you did not specify which command to execute (that is, you simply wrote cargo run without options), then all notes will be displayed
+    /// * If you did not specify which command to execute, then all total notes will be displayed
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
