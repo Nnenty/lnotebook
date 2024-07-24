@@ -30,6 +30,19 @@ pub struct Note {
     pub note_name: String,
 }
 
+impl Note {
+    /// Return field `note` as `&str`.
+    ///
+    /// If note is `Some()`, returns content of note as `&str`; else returns empty `&str`("")
+    pub fn note_str(&mut self) -> &str {
+        if let Some(some_note) = &self.note {
+            some_note
+        } else {
+            ""
+        }
+    }
+}
+
 /// Displays and return the requested note.
 /// ### Returns
 /// * Ok
@@ -286,10 +299,8 @@ RETURNING id, note_name, note
 ///
 ///    // Returns updated note
 ///    let upd_row = upd("wrong_note", "This is NOT wrong note", pool).await?;
-///    // Parcing `Some()`
-///    let upd_row_note = if let Some(n) = &upd_row.note { n } else { "" };
 ///
-///    assert_eq!("This is NOT wrong note", upd_row_note);
+///    assert_eq!("This is NOT wrong note", upd_row.note_str());
 ///
 ///    Ok(())
 /// }

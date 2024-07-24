@@ -8,6 +8,36 @@
 //! is not clear to you.
 //!
 //! ### How use commands
+//! To begin you should write some code that will
+//! create new [`NoteCommand`] and call [`NoteCommand::execute_command`].
+//! For example, this is what the code from [`notebook_main`][`crate`] that meets the requirements looks like:
+//! ```rust,no run
+//! // --snip--
+//! #[tokio::main]
+//! async fn main() -> anyhow::Result<()> {
+//!    tracing_subscriber::registry()
+//!         .with(fmt::layer())
+//!         .with(EnvFilter::new("debug"))
+//!         .init();
+//!
+//!     // Get database URL from enivroment variable
+//!     let db_url = get_db_url().await?;
+//!
+//!     // Connecting to database
+//!     let db = PgPool::connect(&db_url).await?;
+//!
+//!     event!(Level::DEBUG, "Connect to db");
+//!
+//!     // Converting command from environment variable to NoteCommand option
+//!     let a = NoteCommand::new().await?;
+//!     // Execute the selected command
+//!     a.execute_command(&db).await?;
+//!
+//!     event!(Level::DEBUG, "Command executed");
+//!
+//!     Ok(())
+//! }
+//! ```
 //! To use these commands you must use:
 //! ```bash
 //! cargo run -- `your-command`
