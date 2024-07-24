@@ -6,7 +6,20 @@
 //! you can easily write a executor yourself as you want,
 //! sometimes looking into this module if something in [`notebook_api`][crate]
 //! is not clear to you.
-
+//!
+//! ### How use commands
+//! To use these commands you must enter
+//! ```
+//! cargo run -- `your-command`
+//! ```
+//! List of all commands:
+//! * `add-note <notename>`- prompts to enter new note that will be added to the notebook under `notename`.
+//! * `del-note <notename>` - deletes note with `notename` if it exist.
+//! * `del-all` - deletes all total notes from the notebook.
+//! * `upd-note <notename>` - prompts to enter a note that will be added instead old note in `notename`.
+//! * `upd-notename <new notename>` - updates old notename to new `notename` of requested note.
+//! * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
+//! * If you did not specify which command to execute, then all total notes will be displayed.
 use crate::commands::{add, del, del_all, display, display_all, upd, upd_notename};
 use crate::errors::NotebookError;
 use sqlx::{self, PgPool};
@@ -14,52 +27,61 @@ use std::{io, process};
 use structopt::StructOpt;
 use tracing::{event, Level};
 
-/// Contains the command as [Option<`command`>][Command] from the environment variable to run it later.
+/// Contains the command as `enum` from the environment variable to run it later.
 ///
-/// This `struct` was created to conveniently store and execute commands on a notebook from enivronment variables
+/// This `struct` was created to conveniently store and execute commands on a notebook from enivronment variables.
+/// More about these commands [here][crate::commands::execute_commands]
 #[derive(StructOpt)]
 pub struct NoteCommand {
     #[structopt(subcommand)]
     cmd: Option<Command>,
 }
 #[derive(StructOpt)]
-/// Enum that was created to determine which command will run using [`execute_command`][NoteCommand::execute_command].
-pub enum Command {
-    /// Prompts to enter a note that will be added to the notebook if no [errors][crate::errors] occurs.
-    AddNote { notename: String },
-    /// Deletes requested note if it exist.
-    DelNote { notename: String },
-    /// Deletes all total notes from the notebook.
+enum Command {
+    AddNote {
+        notename: String,
+    },
+
+    DelNote {
+        notename: String,
+    },
     DelAll,
-    /// Update only notename of requested note.
+
     UpdNotename {
         notename: String,
         new_notename: String,
     },
-    /// Update only note of requested note.
-    UpdNote { notename: String },
-    /// Display requested `notename`, `note` and note-`id`.
-    DisplayNote { notename: String },
+    UpdNote {
+        notename: String,
+    },
+
+    DisplayNote {
+        notename: String,
+    },
 }
 
 impl NoteCommand {
-    /// Takes a command from enivronment variable as [Option<`command`>][Command]
+    /// Takes a command from enivronment variable as `enum` and saves it in `struct`.
     ///
-    /// * will `Some(Command)` if you selected any existing command in [`Command`]
-    /// * will `None` if you **didn't selected**/**selected a non-existent command** in [`Command`]
+    /// * will `Some(command)` if you selected any existing command
+    /// * will `None` if you **didn't selected**/**selected a non-existent command**
+    ///
+    /// More about these commands [here][crate::commands::execute_commands]
     pub async fn new() -> Result<NoteCommand, structopt::clap::Error> {
         Ok(NoteCommand::from_args_safe()?)
     }
     /// Execute specifed command
     ///
     /// List of all commands:
-    /// * [`add-note`][Command::AddNote] - prompts to enter a note that will be added to the notebook if no [errors][crate::errors] occurs.
-    /// * [`del-note`][Command::DelNote] - deletes requested note if it exist.
-    /// * [`del-all`][Command::DelAll] - deletes all total notes from the notebook.
-    /// * [`upd-note`][Command::UpdNote] - update only notename of requested note.
-    /// * [`upd-notename`][Command::UpdNotename] - update only note of requested note.
-    /// * [`display-note`][Command::DisplayNote] - display requested `notename`, `note` and note-`id`.
-    /// * If you did not specify which command to execute, then all total notes will be displayed
+    /// * `add-note`- prompts to enter a note that will be added to the notebook if no [errors][crate::errors] occurs.
+    /// * `del-note` - deletes requested note if it exist using.
+    /// * `del-all` - deletes all total notes from the notebook.
+    /// * `upd-note` - update only `note` of requested note.
+    /// * `upd-notename` - update only `notename` of requested note.
+    /// * `display-note` - display `notename`, `note` and note-`id` of requested note.
+    /// * If you did not specify which command to execute, then all total notes will be displayed.
+    ///
+    /// More about these commands [here][crate::commands::execute_commands]
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {

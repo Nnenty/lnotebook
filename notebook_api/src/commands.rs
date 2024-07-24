@@ -16,13 +16,13 @@ use tracing::{event, Level};
 /// * [`display`]
 /// ### Example
 /// ```rust,no run
-/// async fn struct_example(pool: &PgPool) -> Result<Note, NotebookError> {
+/// async fn struct_example(pool: &PgPool) -> Result<(), NotebookError> {
 ///     // `add()` returns struct `Note` that we can use later as we wish
 ///     let row = add("early_sleep", "I'll go to bed early today", pool).await?;
 ///
 ///     assert_eq!("early_sleep", row.note_name);
 ///
-///     Ok(row)
+///     Ok(())
 /// }
 pub struct Note {
     pub id: i32,
@@ -33,12 +33,12 @@ pub struct Note {
 /// Displays and return the requested note.
 /// ### Returns
 /// * Ok
-///     * [`Note`]
+///     * [Note]
 /// * Errors
 ///     * [`NotebookError::Sqlx`] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
-/// async fn display_example(pool: &PgPool) -> Result<Note, NotebookError> {
+/// async fn display_example(pool: &PgPool) -> Result<(), NotebookError> {
 ///    add("med_evn", "Dont forget to meditate in the evening", pool).await?;
 ///
 ///    // Display and return `Note` that was displayed
@@ -46,7 +46,7 @@ pub struct Note {
 ///
 ///    assert_eq!("med_evn", displayed_row.note_name);
 ///
-///    Ok(displayed_row)
+///    Ok(())
 /// }
 /// ```
 pub async fn display(notename: &str, pool: &PgPool) -> Result<Note, NotebookError> {
@@ -118,13 +118,13 @@ FROM notebook
 /// if any other [`sqlx::Error`] occurs
 /// ### Example
 /// ```rust,no run
-/// async fn add_example(pool: &PgPool) -> Result<Note, NotebookError> {
+/// async fn add_example(pool: &PgPool) -> Result<(), NotebookError> {
 ///     // Retruns added note as struct `Note`
 ///     let row = add("add", "Added a some note so you don't forget", pool).await?;
 ///
 ///     assert_eq!("add", row.note_name);
 ///
-///     Ok(row)
+///     Ok(())
 /// }
 /// ```
 pub async fn add(notename: &str, note: &str, pool: &PgPool) -> Result<Note, NotebookError> {
@@ -174,7 +174,7 @@ RETURNING id, note_name, note
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
-/// async fn delete_example(pool: &PgPool) -> Result<Note, NotebookError> {
+/// async fn delete_example(pool: &PgPool) -> Result<(), NotebookError> {
 ///     let row = add("bad_cat", "Buy new slippers. The old ones were ruined by the cat", pool).await?;
 ///
 ///     del(&row.note_name, pool).await?;
@@ -182,7 +182,7 @@ RETURNING id, note_name, note
 ///     // Should return error because note `bad_cat` is not exist
 ///     display(&row.note_name, pool).await?;
 ///
-///     Ok(row)
+///     Ok(())
 /// }
 /// ```
 pub async fn del(notename: &str, pool: &PgPool) -> Result<(), NotebookError> {
@@ -281,7 +281,7 @@ RETURNING id, note_name, note
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
-/// async fn upd_example(pool: &PgPool) -> Result<Note, NotebookError> {
+/// async fn upd_example(pool: &PgPool) -> Result<(), NotebookError> {
 ///    add("wrong_note", "Thos is erong nlte", pool).await?;
 ///
 ///    // Returns updated note
@@ -291,7 +291,7 @@ RETURNING id, note_name, note
 ///
 ///    assert_eq!("This is NOT wrong note", upd_row_note);
 ///
-///    Ok(upd_row)
+///    Ok(())
 /// }
 /// ```
 pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, NotebookError> {
@@ -328,7 +328,7 @@ pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, 
 ///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
 /// ### Example
 /// ```rust,no run
-/// async fn upd_notename_example(pool: &PgPool) -> Result<Note, NotebookError> {
+/// async fn upd_notename_example(pool: &PgPool) -> Result<(), NotebookError> {
 ///    add("wrlng_nptenAme", "", pool).await?;
 ///
 ///    // Returns updated notename
@@ -336,7 +336,7 @@ pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, 
 ///
 ///    assert_eq!("not_wrong_name", upd_row.note_name);
 ///
-///    Ok(upd_row)
+///    Ok(())
 /// }
 /// ```
 pub async fn upd_notename(
