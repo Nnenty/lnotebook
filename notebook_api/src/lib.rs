@@ -1,5 +1,5 @@
 //! # Notebook_api
-//! `Notebook_api` is an asynchronous API for creating notebooks that store notes in a database.
+//! `Notebook_api` is a small asynchronous API for creating notebooks that store notes in a database.
 
 pub mod commands;
 pub use commands::execute_commands::NoteCommand;

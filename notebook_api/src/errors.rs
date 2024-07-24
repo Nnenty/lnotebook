@@ -1,4 +1,4 @@
-//! Errors returned from the [`notebook API`][crate]
+//! Errors returned from the [`notebook API`][crate].
 
 #[derive(thiserror::Error, Debug)]
 /// Conatins all errors returned from the notebook API
@@ -11,7 +11,7 @@ pub enum NotebookError {
     /// Try use `export DATABASE_URL=postgres://username:password@localhost/db` before start programm
     #[error(
         "Data base enivroment variable for notebook not specifed;
-Try use `export DATABASE_URL=postgres://username:password@localhost/db` before start programm"
+try use `export DATABASE_URL=postgres://username:password@localhost/db` before start programm"
     )]
     DatabaseNotSpecifed,
 

@@ -3,7 +3,6 @@
 pub mod execute_commands;
 use crate::errors;
 use errors::NotebookError;
-pub use execute_commands::NoteCommand;
 
 use sqlx::{self, PgPool};
 use tracing::{event, Level};
