@@ -9,8 +9,8 @@
 //!
 //! ### How use commands
 //! To begin you should write some code that will
-//! create new [`NoteCommand`] and call [`NoteCommand::execute_command`].
-//! For example, this is what the code from [`notebook_main`][`crate`] that meets the requirements looks like:
+//! create new using [`NoteCommand::new`] and call [`NoteCommand::execute_command`].
+//! For example, this is what the code from 'notebook_example' that meets the requirements looks like:
 //! ```rust,no run
 //! // --snip--
 //! #[tokio::main]

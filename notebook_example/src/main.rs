@@ -1,6 +1,5 @@
-//! # Notebook_main
-//! `Notebook_main` is binary file to run [`notebook API`][crate].
-//! This file is just one of many use cases for [`notebook API`][crate]
+//! # Notebook_example
+//! `Notebook_example` is simple example of use [`notebook API`][crate].
 
 use anyhow;
 use sqlx::{self, PgPool};
