@@ -11,7 +11,8 @@ pub enum NotebookError {
     /// Try use `export DATABASE_URL=postgres://username:password@localhost/db` before start programm
     #[error(
         "Data base enivroment variable for notebook not specifed;
-try use `export DATABASE_URL=postgres://username:password@localhost/db` before start programm"
+try use `export DATABASE_URL=postgres://username:password@localhost/db` before start programm
+before use `cargo run ...` again"
     )]
     DatabaseNotSpecifed,
 
