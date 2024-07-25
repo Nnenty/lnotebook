@@ -1,16 +1,18 @@
 <h1 align ="center">LNotebook API</h1>
 <div align ="center">
-<strong>
-<h4> asynchronous API to creating notebooks that stores notes in a database </h4>
-</strong>
-API that will helps you quickly make your own notebook
+<h3> asynchronous API to creating notebooks that stores notes in a database </h3>
+
+<h5> API that will helps you quickly make your own notebook </h5>
 </div>
 
-This API using:
+<h3>This API using:</h3>
+
 - **[SQLx](https://github.com/launchbadge/sqlx?tab=readme-ov-file)**
-- **[Tokio](https://tokio.rs/)** 
+- **[Tokio](https://tokio.rs/)**
 
 ## Preparing
+To start work with notebook you must complete commands below:
+
 1. To get started, run the command below; it will clones this repository into your current directory:
 ```
 git clone https://github.com/Nnenty/lnotebook_api
@@ -26,9 +28,10 @@ cd notebook_example/
 ```
 export DATABASE_URL=postgres://username:password@localhost/db`
 ```
-4. Migrate your db using command:
+4. Migrate using command:
+> Note: install [SQLx-cli](https://crates.io/crates/sqlx-cli) if you don't have it installed to run code below.
 ```
 just migrate
 ```
- 
-You did it! Then you have a database ready to use in notebook.
+
+<h4> You did it! Then you have a database ready to use in notebook. </h4s>
