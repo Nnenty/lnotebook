@@ -23,14 +23,14 @@ async fn main() -> anyhow::Result<()> {
     // Connecting to database
     let db = PgPool::connect(&db_url).await?;
 
-    event!(Level::DEBUG, "Connect to db");
+    event!(Level::INFO, "Connect to db");
 
     // Converting terminal command to `enum` and save it in `NoteCommand`
     let a = NoteCommand::new().await?;
     // Execute the selected command
     a.execute_command(&db).await?;
 
-    event!(Level::DEBUG, "Command executed");
+    event!(Level::INFO, "Command executed");
 
     Ok(())
 }
