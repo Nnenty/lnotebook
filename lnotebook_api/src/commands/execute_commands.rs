@@ -164,6 +164,7 @@ impl NoteCommand {
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
+                println!("Current note in `{}`", notename);
                 println!("Enter note you want to add into `{}`", notename);
                 println!("(At the end of the note, enter `#endnote#` to finish writing the note):");
 

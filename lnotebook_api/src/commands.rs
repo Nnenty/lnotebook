@@ -1,4 +1,4 @@
-//! This module containing functions you can run to control the notebook.
+//! This module contains functions that can be combined as you want and used to control a notebook.
 pub mod execute_commands;
 use crate::errors;
 use errors::NotebookError;
@@ -33,11 +33,11 @@ impl Note {
     /// Return field `note` as `&str`.
     ///
     /// If note is `Some()`, returns content of note as `&str`; else returns empty `&str`("")
-    pub fn note_str(&mut self) -> &str {
+    pub async fn note_str(&mut self) -> String {
         if let Some(some_note) = &self.note {
-            some_note
+            some_note.to_owned()
         } else {
-            ""
+            "".to_owned()
         }
     }
 }
@@ -62,18 +62,8 @@ impl Note {
 /// }
 /// ```
 pub async fn display(notename: &str, pool: &PgPool) -> Result<Note, NotebookError> {
-    let row = sqlx::query!(
-        "
-SELECT *
-FROM notebook
-WHERE note_name = $1
-        ",
-        notename
-    )
-    .fetch_one(pool)
-    .await?;
-
-    let row_note = if let Some(n) = &row.note { n } else { "" };
+    let mut row = select_one(notename, pool).await?;
+    let row_note = row.note_str().await;
 
     event!(
         Level::INFO,
@@ -83,11 +73,7 @@ WHERE note_name = $1
         row_note
     );
 
-    Ok(Note {
-        id: row.id,
-        note: row.note,
-        note_name: row.note_name,
-    })
+    Ok(row)
 }
 
 /// Displays all total notes in notebook.
@@ -154,7 +140,7 @@ RETURNING id, note_name, note
     {
         Ok(row) => {
             event!(
-                Level::DEBUG,
+                Level::INFO,
                 "Insert note with name `{}` with data `{}` into notebook",
                 notename,
                 note
@@ -213,7 +199,7 @@ RETURNING id, note_name, note
             let row_note = if let Some(n) = &row.note { n } else { "" };
 
             event!(
-                Level::DEBUG,
+                Level::INFO,
                 "Deleteing note:\nID: {}\nName: {}\nData:\n{}",
                 row.id,
                 notename,
@@ -271,7 +257,7 @@ RETURNING id, note_name, note
                 let row_note = if let Some(n) = &row.note { n } else { "" };
 
                 event!(
-                    Level::DEBUG,
+                    Level::INFO,
                     "Deleting ID: {}; Name: {}; Data:\n{}",
                     row.id,
                     row.note_name,
@@ -318,7 +304,7 @@ pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, 
     .await
     {
         Ok(upd_row) => {
-            event!(Level::DEBUG, "Update `{}` data to:\n{}", notename, new_note,);
+            event!(Level::INFO, "Update `{}` data to:\n{}", notename, new_note,);
 
             Ok(Note {
                 id: upd_row.id,
@@ -369,7 +355,7 @@ RETURNING id, note_name, note
     {
         Ok(upd_row) => {
             event!(
-                Level::DEBUG,
+                Level::INFO,
                 "Update notename\nFrom: {}\nTo: {}",
                 notename,
                 new_notename
@@ -383,4 +369,29 @@ RETURNING id, note_name, note
         }
         Err(err) => Err(NotebookError::Sqlx(err)),
     }
+}
+
+/// Returns the requested note.
+/// ### Returns
+/// * Ok
+///     * [Note]
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+pub async fn select_one(notename: &str, pool: &PgPool) -> Result<Note, NotebookError> {
+    let row = sqlx::query!(
+        "
+SELECT *
+FROM notebook
+WHERE note_name = $1
+        ",
+        notename
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(Note {
+        id: row.id,
+        note: row.note,
+        note_name: row.note_name,
+    })
 }
