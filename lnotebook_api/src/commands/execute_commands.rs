@@ -1,7 +1,7 @@
 //! In this module functions from [`commands module`][crate::commands]
-//! executes using environment variables.
+//! executes using commands in terminal.
 //!
-//! If you don't like method with enivronment variables
+//! If you don't like method with commands in terminal
 //! for some reason or this module is not suitable for you,
 //! you can easily write a executor yourself as you want,
 //! sometimes looking into this module if something in [`notebook_api`][crate]
@@ -28,7 +28,7 @@
 //!
 //!     event!(Level::DEBUG, "Connect to db");
 //!
-//!     // Converting command from environment variable to NoteCommand option
+//!     // Converting terminal command variable to NoteCommand option
 //!     let a = NoteCommand::new().await?;
 //!     // Execute the selected command
 //!     a.execute_command(&db).await?;
@@ -57,7 +57,7 @@
 //! cargo run -- del-note unnecessary_note
 //! ```
 //!
-//! Сommands such as `add-note` and `del-note` after entering `cargo run ...`
+//! Сommands such as `add-note` and `del-note`
 //! will prompt you to enter a new note. To finish write note you
 //! should write `#endnote#` at the end, as written in the tooltip.
 //! For example the code below will update the 'passwords' note to
@@ -103,15 +103,6 @@ use std::{io, process};
 use structopt::StructOpt;
 use tracing::{event, Level};
 
-/// Contains the command as `enum` from the environment variable to run it later.
-///
-/// This `struct` was created to conveniently store and execute commands on a notebook from enivronment variables.
-/// More about the commands for which this structure was created [here][crate::commands::execute_commands].
-#[derive(StructOpt)]
-pub struct NoteCommand {
-    #[structopt(subcommand)]
-    cmd: Option<Command>,
-}
 #[derive(StructOpt)]
 enum Command {
     AddNote {
@@ -138,17 +129,27 @@ enum Command {
     },
 }
 
+/// Contains the command as `enum` from terminal to run it later.
+///
+/// This `struct` was created to conveniently store and execute commands on a notebook from terminal commands.
+/// More about commands for which this structure was created [here][crate::commands::execute_commands].
+#[derive(StructOpt)]
+pub struct NoteCommand {
+    #[structopt(subcommand)]
+    cmd: Option<Command>,
+}
 impl NoteCommand {
-    /// Takes a command from enivronment variable as `enum` and saves it in `struct`.
+    /// Convert a command from terminal to `enum` and saves it in [struct `NoteCommand`][NoteCommand].
     ///
-    /// * will `Some(command)` if you selected any existing command
-    /// * will `None` if you **didn't selected**/**selected a non-existent command**
+    /// Command stores in [`NoteCommand`] as `Option<Command>` and will be:
+    /// * `Some(Command)` if you selected any existing command
+    /// * `None` if you **didn't selected**/**selected a non-existent command**
     ///
-    /// More about these commands [here][crate::commands::execute_commands]
+    /// More about commands [here][crate::commands::execute_commands].
     pub async fn new() -> Result<NoteCommand, structopt::clap::Error> {
         Ok(NoteCommand::from_args_safe()?)
     }
-    /// Execute specifed command
+    /// Execute specifed command.
     ///
     /// List of all commands:
     /// * `add-note <notename>`- prompts to enter new note that will be added to the notebook under `notename`.
@@ -159,7 +160,7 @@ impl NoteCommand {
     /// * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
     /// * If you did not specify which command to execute, then all total notes will be displayed.
     ///
-    /// More about these commands [here][crate::commands::execute_commands]
+    /// More about these commands [here][crate::commands::execute_commands].
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {

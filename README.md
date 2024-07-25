@@ -2,7 +2,7 @@
 <div align ="center">
 <h3> asynchronous API to creating notebooks that stores notes in a database </h3>
 
-<h5> API that will helps you quickly make your own notebook </h5>
+<h5> API that will helps you quickly make your own notebook and commands to manipulate it </h5>
 </div>
 
 <h3>This API using:</h3>
@@ -23,8 +23,7 @@ cd lnotebook_api/
 ```
 cd notebook_example/
 ```
-3. Then you should export your database using the command:
-(change fields on yours):
+3. Then you should export your database using the command (change URL on yours):
 ```
 export DATABASE_URL=postgres://username:password@localhost/db`
 ```
