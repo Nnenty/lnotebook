@@ -298,7 +298,7 @@ RETURNING note_name
     }
 }
 
-/// Updates note and returns updated note.
+/// Updates content of note and returns updated note.
 /// ### Returns
 /// * Ok
 ///     * [Note] that was updated

@@ -1,4 +1,4 @@
-//! In this module functions from [`commands module`][crate::commands]
+//! In this module functions from [`commands` module][crate::commands]
 //! executes using commands in
 //! terminal.
 //!
@@ -59,10 +59,10 @@
 //! cargo run -- del-note unnecessary_note
 //! ```
 //!
-//! Сommands such as `add-note` and `del-note`
+//! Сommands such as `add-note` and `upd-note`
 //! will prompt you to enter a new note. To finish write note you
 //! should write `#endnote#` at the end, as written in the tooltip.
-//! For example the code below will update the 'passwords' note to
+//! For example the code below will update the 'passwords' content to
 //! 'login: krutoy_4el\npassword: 123' if note exists:
 //! ```bash
 //! cargo run -- upd-note passwords
@@ -73,8 +73,7 @@
 //!
 //! # input
 //! login: krutoy_4el
-//! password: 1234
-//! #endnote#
+//! password: 1234#endnote#
 //!
 //! # output
 //! Note to add into `passwords`:

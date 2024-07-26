@@ -1,6 +1,7 @@
 <h1 align ="center">LNotebook</h1>
 <div align ="center">
-<h3> asynchronous API to creating notebooks that stores notes in a database </h3>
+
+asynchronous API that will helps you to write simple notebook
 
 <a href="https://crates.io/crates/lnotebook">
 <img src="https://img.shields.io/crates/v/lnotebook"/>
@@ -8,8 +9,6 @@
 <a href="https://docs.rs/lnotebook/">
 <img src="https://img.shields.io/docsrs/lnotebook">
 </a>
-
-<h5> API that will helps you quickly make your own notebook and commands to manipulate it </h5>
 </div>
 
 <h3>This API using:</h3>
@@ -18,19 +17,19 @@
 - **[Tokio](https://tokio.rs/)**
 
 ## Preparing
-To start work with notebook you must complete commands below:
+Before start working with notebook you must complete commands below.
 
-1. To get started, clone our repository:
+1. Clone our repository:
 ```
 git clone https://github.com/Nnenty/lnotebook
 
 cd lnotebook/
 ```
-2. After cloning the repository you need to go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) catalog:
+2. Go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) directorys:
 ```
 cd notebook_example/
 ```
-3. Then you should export your database using the command below (change URL on yours):
+3. Export your database (change URL on yours):
 ```
 export DATABASE_URL=postgres://username:password@localhost/db`
 ```
@@ -38,7 +37,7 @@ export DATABASE_URL=postgres://username:password@localhost/db`
 ```
 just migrate
 ```
-> **Note**: install [SQLx-cli](https://crates.io/crates/sqlx-cli) if you don't have it installed to run code below.
+> **Note**: install [SQLx-cli](https://crates.io/crates/sqlx-cli) if you don't have it installed to run code above.
 
 <h4> You did it! Then you have a database ready to use in notebook. </h4s>
 
@@ -49,7 +48,7 @@ just migrate
 ```
 cargo run
 ```
-> **Note**: when you use `cargo run` without terminal command, programm should display all total notes.
+> **Note**: when you use `cargo run` without terminal command, program should display all total notes.
 Read more about terminal commands in [our documentation](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/).
 
 Let's add new note:
@@ -65,7 +64,7 @@ Then let's print our note:
 ```
 cargo run -- display-note passwords
 ```
-The output of the program will be like this:
+The output of this program will be like this:
 ```
 ID: 1
 Name: passwords
