@@ -102,8 +102,9 @@ FROM notebook
 /// ### Example
 /// ```rust,no run
 /// async fn add_example(pool: &PgPool) -> Result<(), NotebookError> {
-///     // Retruns added note as struct `Note`
-///     let row = add("add", "Added a some note so you don't forget", pool).await?;
+///     add("add_note", "Added a some note so you don't forget", pool).await?;
+///
+///     let row = select_one("add_note", pool).await?;
 ///
 ///     assert_eq!("add", row.note_name);
 ///
@@ -158,12 +159,12 @@ RETURNING id, note_name, note
 /// ### Example
 /// ```rust,no run
 /// async fn delete_example(pool: &PgPool) -> Result<(), NotebookError> {
-///     let row = add("bad_cat", "Buy new slippers. The old ones were ruined by the cat", pool).await?;
+///     add("bad_cat", "Buy new slippers. The old ones were ruined by the cat", pool).await?;
 ///
 ///     del(&row.note_name, pool).await?;
 ///
 ///     // Should return error because note `bad_cat` is not exist
-///     display(&row.note_name, pool).await?;
+///     select_one("bad_cat", pool).await?;
 ///
 ///     Ok(())
 /// }

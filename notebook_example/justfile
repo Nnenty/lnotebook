@@ -1,5 +1,5 @@
 prepare:
-    cargo sqlx prepare -- --all-targets
+    cd ../cargo sqlx prepare -- --all-targets
 
 # Use this after you have specified the `DATABASE_URL`
 migrate:
