@@ -19,7 +19,7 @@ git clone https://github.com/Nnenty/lnotebook
 
 cd lnotebook/
 ```
-2. After cloning the repository you need to go to [notebook_example](notebook_example/) catalog:
+2. After cloning the repository you need to go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) catalog:
 ```
 cd notebook_example/
 ```
