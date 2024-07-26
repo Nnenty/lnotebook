@@ -1,4 +1,4 @@
-<h1 align ="center">LNotebook API</h1>
+<h1 align ="center">LNotebook</h1>
 <div align ="center">
 <h3> asynchronous API to creating notebooks that stores notes in a database </h3>
 
@@ -15,9 +15,9 @@ To start work with notebook you must complete commands below:
 
 1. To get started, clone our repository:
 ```
-git clone https://github.com/Nnenty/lnotebook_api
+git clone https://github.com/Nnenty/lnotebook
 
-cd lnotebook_api/
+cd lnotebook/
 ```
 2. After cloning the repository you need to go to [notebook_example](notebook_example/) directory catalog:
 ```

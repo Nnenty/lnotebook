@@ -193,7 +193,7 @@ impl NoteCommand {
                         note = note + note_part.as_str();
                     }
                 }
-                print!("Note to add into `{notename}`:\n{note}");
+                println!("Note to add into `{notename}`:\n{note}");
 
                 add(&notename, &note, pool).await?;
             }
@@ -249,7 +249,7 @@ impl NoteCommand {
                         note = note + note_part.as_str();
                     }
                 }
-                print!("Note to add into `{notename}` instead old note:\n{note}");
+                println!("Note to add into `{notename}` instead old note:\n{note}");
 
                 upd(&notename, &note, pool).await?;
             }

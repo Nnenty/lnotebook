@@ -1,9 +1,9 @@
 [package]
-name = "lnotebook_api"
+name = "lnotebook"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/Nnenty/lnotebook_api"
+repository = "https://github.com/Nnenty/lnotebook"
 description = "asynchronous API to creating notebooks that stores notes in a database"
 
 [dependencies]

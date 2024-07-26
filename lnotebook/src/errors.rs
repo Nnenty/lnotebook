@@ -1,7 +1,7 @@
-//! Errors returned from the [`LNotebook API`][crate].
+//! Errors returned from the [`LNotebook`][crate].
 
 #[derive(thiserror::Error, Debug)]
-/// Conatins all errors returned from the [`LNotebook API`][crate]
+/// Conatins all errors returned from the [`LNotebook`][crate]
 pub enum NotebookError {
     /// The note-name is already taken; try use another note-name
     #[error("The notename `{notename}` is already taken; try use another note-name")]

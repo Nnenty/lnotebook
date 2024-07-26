@@ -1,4 +1,4 @@
 [workspace]
-members = ["lnotebook_api", "notebook_example"]
-default-members = ["lnotebook_api", "notebook_example"]
+members = ["lnotebook", "notebook_example"]
+default-members = ["lnotebook", "notebook_example"]
 resolver = "2"

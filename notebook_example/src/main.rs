@@ -1,5 +1,5 @@
 //! # Notebook_example
-//! `Notebook_example` is simple example of use [`LNotebook API`][crate].
+//! `Notebook_example` is simple example of use [`LNotebook`][crate].
 
 use anyhow;
 use sqlx::{self, PgPool};
@@ -8,7 +8,7 @@ use tokio;
 use tracing::{event, Level};
 use tracing_subscriber::{fmt, layer::SubscriberExt as _, util::SubscriberInitExt as _, EnvFilter};
 
-use lnotebook_api::{get_db_url, NoteCommand};
+use lnotebook::{get_db_url, NoteCommand};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
