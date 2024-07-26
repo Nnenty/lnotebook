@@ -10,7 +10,7 @@
 //! ### How use commands
 //! To begin you should write some code that will
 //! create new [struct `NoteCommand`][NoteCommand] using [`NoteCommand::new`] and call [`NoteCommand::execute_command`].
-//! For example, this is what the code from 'notebook_example' that meets the requirements looks like:
+//! For example, this is what the code from [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) that meets the requirements looks like:
 //! ```rust,no run
 //! // --snip--
 //! #[tokio::main]

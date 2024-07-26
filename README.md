@@ -19,7 +19,7 @@ git clone https://github.com/Nnenty/lnotebook
 
 cd lnotebook/
 ```
-2. After cloning the repository you need to go to [notebook_example](notebook_example/) directory catalog:
+2. After cloning the repository you need to go to [notebook_example](notebook_example/) catalog:
 ```
 cd notebook_example/
 ```
@@ -51,8 +51,7 @@ cargo run -- add-note passwords
 ```
 The program will ask you to enter the desired note to add to the notebook. Paste text
 `login: krutoy_4el
-password: 1234
-#endnote#`
+password: 1234#endnote#`
 into.
 
 Then let's print our note:
