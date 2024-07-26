@@ -2,6 +2,13 @@
 <div align ="center">
 <h3> asynchronous API to creating notebooks that stores notes in a database </h3>
 
+<a href="https://crates.io/crates/lnotebook">
+<img src="https://img.shields.io/crates/v/lnotebook"/>
+</a>
+<a href="https://docs.rs/lnotebook/">
+<img src="https://img.shields.io/docsrs/lnotebook">
+</a>
+
 <h5> API that will helps you quickly make your own notebook and commands to manipulate it </h5>
 </div>
 
@@ -43,7 +50,7 @@ just migrate
 cargo run
 ```
 > **Note**: when you use `cargo run` without terminal command, programm should display all total notes.
-Read more about terminal commands in [our documentation]().
+Read more about terminal commands in [our documentation](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/).
 
 Let's add new note:
 ```
@@ -68,4 +75,4 @@ password: 1234
 ```
 
 ### More about terminal commands
-To learn more about commands in terminal similar to `add-note` from the example above read [our documentation]().
+To learn more about commands in terminal similar to `add-note` from the example above read [our documentation](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/).
