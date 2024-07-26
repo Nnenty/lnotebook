@@ -42,26 +42,11 @@ impl Note {
     }
 }
 
-/// Displays and return the requested note.
+/// Displays the requested note.
 /// ### Returns
-/// * Ok
-///     * [Note]
 /// * Errors
 ///     * [`NotebookError::Sqlx`] error from [`sqlx::Error`]
-/// ### Example
-/// ```rust,no run
-/// async fn display_example(pool: &PgPool) -> Result<(), NotebookError> {
-///    add("med_evn", "Dont forget to meditate in the evening", pool).await?;
-///
-///    // Display and return `Note` that was displayed
-///    let displayed_row = display("med_evn", pool).await?;
-///
-///    assert_eq!("med_evn", displayed_row.note_name);
-///
-///    Ok(())
-/// }
-/// ```
-pub async fn display(notename: &str, pool: &PgPool) -> Result<Note, NotebookError> {
+pub async fn display(notename: &str, pool: &PgPool) -> Result<(), NotebookError> {
     let mut row = select_one(notename, pool).await?;
     let row_note = row.note_str().await;
 
@@ -73,7 +58,7 @@ pub async fn display(notename: &str, pool: &PgPool) -> Result<Note, NotebookErro
         row_note
     );
 
-    Ok(row)
+    Ok(())
 }
 
 /// Displays all total notes in notebook.
@@ -283,9 +268,9 @@ RETURNING id, note_name, note
 ///    add("wrong_note", "Thos is erong nlte", pool).await?;
 ///
 ///    // Returns updated note
-///    let upd_row = upd("wrong_note", "This is NOT wrong note", pool).await?;
+///    let mut upd_row = upd("wrong_note", "This is NOT wrong note", pool).await?;
 ///
-///    assert_eq!("This is NOT wrong note", upd_row.note_str());
+///    assert_eq!("This is NOT wrong note", upd_row.note_str().await);
 ///
 ///    Ok(())
 /// }

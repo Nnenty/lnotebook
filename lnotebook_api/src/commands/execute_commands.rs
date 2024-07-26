@@ -170,19 +170,22 @@ impl NoteCommand {
 
                 let mut note = String::new();
                 loop {
-                    let mut check_end = String::new();
+                    let mut note_part = String::new();
 
-                    io::stdin().read_line(&mut check_end).unwrap_or_else(|e| {
+                    io::stdin().read_line(&mut note_part).unwrap_or_else(|e| {
                         event!(Level::DEBUG, "Problem to read line: {e}");
 
                         process::exit(1);
                     });
 
-                    if check_end.contains("#endnote#") {
-                        break;
-                    }
+                    if note_part.contains("#endnote#") {
+                        delete_end(&mut note_part, "#endnote#").await;
+                        note = note + note_part.as_str();
 
-                    note = note + check_end.as_str();
+                        break;
+                    } else {
+                        note = note + note_part.as_str();
+                    }
                 }
                 print!("Note to add into `{notename}`:\n{note}");
 
@@ -211,25 +214,28 @@ impl NoteCommand {
                 );
                 println!("(At the end of the note, enter `#endnote#` to finish writing the note):");
 
-                let mut new_note = String::new();
+                let mut note = String::new();
                 loop {
-                    let mut check_end = String::new();
+                    let mut note_part = String::new();
 
-                    io::stdin().read_line(&mut check_end).unwrap_or_else(|e| {
-                        event!(Level::DEBUG, "Problem to read `{}` line: {}", check_end, e);
+                    io::stdin().read_line(&mut note_part).unwrap_or_else(|e| {
+                        event!(Level::DEBUG, "Problem to read line: {e}");
 
                         process::exit(1);
                     });
 
-                    if check_end.contains("#endnote#") {
+                    if note_part.contains("#endnote#") {
+                        delete_end(&mut note_part, "#endnote#").await;
+                        note = note + note_part.as_str();
+
                         break;
+                    } else {
+                        note = note + note_part.as_str();
                     }
-
-                    new_note = new_note + check_end.as_str();
                 }
-                print!("Note to add into `{notename}` instead old note:\n{new_note}");
+                print!("Note to add into `{notename}` instead old note:\n{note}");
 
-                upd(&notename, &new_note, pool).await?;
+                upd(&notename, &note, pool).await?;
             }
 
             Some(Command::DisplayNote { notename }) => {
@@ -242,4 +248,23 @@ impl NoteCommand {
         }
         Ok(())
     }
+}
+async fn delete_end(source: &mut String, end: &str) -> String {
+    let _: Vec<_> = source
+        .to_owned()
+        .char_indices()
+        .map(|(i, _)| {
+            // length of end
+            let len = i + end.len();
+
+            if source.contains(end) {
+                if &source[i..len] == end {
+                    // delete end from source and extra information behind it
+                    source.drain(i..);
+                }
+            }
+        })
+        .collect();
+
+    source.to_owned()
 }

@@ -36,7 +36,7 @@ just migrate
 <h4> You did it! Then you have a database ready to use in notebook. </h4s>
 
 ## Start the notebook
-> **Clarification**: all code in this section assumes that you have completed all commands from the section [Preparing](https://github.com/Nnenty/lnotebook_api?tab=readme-ov-file#preparing)
+> **Clarification**: all code in this section assumes that you have completed all commands from the section [Preparing](https://github.com/Nnenty/lnotebook_api?tab=readme-ov-file#preparing).
 
 - Let's try execute `cargo run` only:
 ```
@@ -45,11 +45,11 @@ cargo run
 > **Note**: when you use `cargo run` without terminal command, programm should display all total notes.
 Read more about terminal commands in [our documentation]().
 
-Great, your notebook is works! Let's add new note:
+Let's add new note:
 ```
 cargo run -- add-note passwords
 ```
-The program will ask you to enter the desired note to add to the notebook. Paste text 
+The program will ask you to enter the desired note to add to the notebook. Paste text
 `login: krutoy_4el
 password: 1234
 #endnote#`
@@ -70,4 +70,4 @@ password: 1234
 
 
 ### More about notebook-commands
-To learn more about commands in terminal similar to `add-note` from the example above read [our documentation]()
+To learn more about commands in terminal similar to `add-note` from the example above read [our documentation]().
