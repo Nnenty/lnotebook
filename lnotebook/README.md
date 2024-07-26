@@ -25,7 +25,7 @@ git clone https://github.com/Nnenty/lnotebook
 
 cd lnotebook/
 ```
-2. Go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) directorys:
+2. Go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) directory:
 ```
 cd notebook_example/
 ```
