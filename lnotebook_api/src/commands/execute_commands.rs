@@ -96,7 +96,7 @@
 //! ```
 //! If there were more notes here, they would all be displayed, but since we only have one note, we only got that one.
 
-use crate::commands::{add, del, del_all, display, display_all, upd, upd_notename};
+use crate::commands::{add, del, del_all, display, display_all, select_one, upd, upd_notename};
 use crate::errors::NotebookError;
 use sqlx::{self, PgPool};
 use std::{io, process};
@@ -208,6 +208,12 @@ impl NoteCommand {
             }
 
             Some(Command::UpdNote { notename }) => {
+                println!(
+                    "Current content of `{}`:\n{}",
+                    notename,
+                    select_one(notename, pool).await?.note_str().await
+                );
+
                 println!(
                     "Enter note you want to add instead old note in `{}`",
                     notename
