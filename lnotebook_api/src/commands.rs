@@ -81,7 +81,7 @@ FROM notebook
 
         event!(
             Level::INFO,
-            "\nID: {}:\nName: {}\nData: {}",
+            "\nID: {}:\nName: {}\nData:\n{}",
             row.id,
             row.note_name,
             row_note
@@ -256,6 +256,45 @@ RETURNING id, note_name, note
     }
 }
 
+/// Clears the content of requested note.
+/// ### Returns
+/// * Errors
+///     * [`NotebookError::Sqlx`][NotebookError] error from [`sqlx::Error`]
+/// ### Example
+/// ```rust,no run
+/// async fn delete_example(pool: &PgPool) -> Result<(), NotebookError> {
+///     add("clear_note", "meow meow meow meow", pool).await?;
+///
+///     clear("clear_note", pool).await?;
+///     let row = select("clear_note", pool).await?;
+///
+///     assert_eq!("", row.note_str().await);
+///
+///     Ok(())
+/// }
+/// ```
+pub async fn clear(notename: &str, pool: &PgPool) -> Result<(), NotebookError> {
+    match sqlx::query!(
+        "
+UPDATE notebook
+SET note = ''
+WHERE note_name = $1
+RETURNING note_name
+        ",
+        notename
+    )
+    .fetch_one(pool)
+    .await
+    {
+        Ok(_) => {
+            event!(Level::INFO, "Content of `{}` was cleared", notename);
+
+            Ok(())
+        }
+        Err(err) => Err(NotebookError::Sqlx(err)),
+    }
+}
+
 /// Updates note and returns updated note.
 /// ### Returns
 /// * Ok
@@ -277,10 +316,11 @@ RETURNING id, note_name, note
 /// ```
 pub async fn upd(notename: &str, new_note: &str, pool: &PgPool) -> Result<Note, NotebookError> {
     match sqlx::query!(
-        "UPDATE notebook
-        SET note = $1
-        WHERE note_name = $2
-        RETURNING id, note_name, note
+        "
+UPDATE notebook
+SET note = $1
+WHERE note_name = $2
+RETURNING id, note_name, note
         ",
         new_note,
         notename,

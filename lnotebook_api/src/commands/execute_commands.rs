@@ -46,6 +46,7 @@
 //! * `add-note <notename>` - will prompt to enter new note that will be added to the notebook under `notename`.
 //! * `del-note <notename>` - deletes note with `notename` if it exist.
 //! * `del-all` - deletes all total notes from the notebook.
+//! * `clear-note <notename>` - clears content of `notename`
 //! * `upd-note <notename>` - will prompt to enter a note that will be added instead old note in `notename`.
 //! * `upd-notename <new notename>` - updates old notename to new `notename` of requested note.
 //! * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
@@ -96,7 +97,9 @@
 //! ```
 //! If there were more notes here, they would all be displayed, but since we only have one note, we only got that one.
 
-use crate::commands::{add, del, del_all, display, display_all, select_one, upd, upd_notename};
+use crate::commands::{
+    add, clear, del, del_all, display, display_all, select_one, upd, upd_notename,
+};
 use crate::errors::NotebookError;
 use sqlx::{self, PgPool};
 use std::{io, process};
@@ -114,6 +117,9 @@ enum Command {
     },
 
     DelAll,
+    ClearNote {
+        notename: String,
+    },
 
     UpdNotename {
         notename: String,
@@ -155,6 +161,7 @@ impl NoteCommand {
     /// * `add-note <notename>`- prompts to enter new note that will be added to the notebook under `notename`.
     /// * `del-note <notename>` - deletes note with `notename` if it exist.
     /// * `del-all` - deletes all total notes from the notebook.
+    /// * `clear-note <notename>` - clears content of `notename`
     /// * `upd-note <notename>` - prompts to enter a note that will be added instead old note in `notename`.
     /// * `upd-notename <new notename>` - updates old notename to `new notename` of requested note.
     /// * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
@@ -164,7 +171,6 @@ impl NoteCommand {
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
-                println!("Current note in `{}`", notename);
                 println!("Enter note you want to add into `{}`", notename);
                 println!("(At the end of the note, enter `#endnote#` to finish writing the note):");
 
@@ -198,6 +204,10 @@ impl NoteCommand {
 
             Some(Command::DelAll) => {
                 del_all(pool).await?;
+            }
+
+            Some(Command::ClearNote { notename }) => {
+                clear(notename, pool).await?;
             }
 
             Some(Command::UpdNotename {

@@ -68,6 +68,5 @@ login: krutoy_4el
 password: 1234
 ```
 
-
-### More about notebook-commands
+### More about terminal commands
 To learn more about commands in terminal similar to `add-note` from the example above read [our documentation]().
