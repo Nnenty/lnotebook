@@ -266,7 +266,7 @@ RETURNING id, note_name, note
 ///     add("clear_note", "meow meow meow meow", pool).await?;
 ///
 ///     clear("clear_note", pool).await?;
-///     let row = select("clear_note", pool).await?;
+///     let row = select_one("clear_note", pool).await?;
 ///
 ///     assert_eq!("", row.note_str().await);
 ///
