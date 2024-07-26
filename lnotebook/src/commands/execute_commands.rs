@@ -1,5 +1,6 @@
 //! In this module functions from [`commands module`][crate::commands]
-//! executes using commands in terminal.
+//! executes using commands in
+//! terminal.
 //!
 //! If you don't like method with commands in terminal
 //! for some reason or this module is not suitable for you,
