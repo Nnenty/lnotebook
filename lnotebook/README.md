@@ -76,3 +76,8 @@ password: 1234
 
 ### More about terminal commands
 To learn more about commands in terminal similar to `add-note` from the example above read [our documentation](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/).
+
+## Licenses
+Licensed under either license:
+- Apache-2.0 License
+- MIT License
