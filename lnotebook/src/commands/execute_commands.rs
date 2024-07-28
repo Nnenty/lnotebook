@@ -2,16 +2,18 @@
 //! executes using commands in
 //! terminal.
 //!
-//! If you don't like method with commands in terminal
-//! for some reason or this module is not suitable for you,
-//! you can easily write a executor yourself as you want,
-//! sometimes looking into this module if something in [`notebook_api`][crate]
-//! is not clear to you.
+//! ### About module
+//! First of all, the [`LNotebook`][crate] was created so that you can
+//! quickly and easily write your own notebook. This module just demonstrates
+//! one of many uses of the [`LNotebook`][crate], so if this way of using
+//! the [`commands`][crate::commands] doesn't suit you, just write your own way
+//! to use the functions from the [`commands`][crate::commands].
 //!
 //! ### How use commands
 //! To begin you should write some code that will
-//! create new [struct `NoteCommand`][NoteCommand] using [`NoteCommand::new`] and call [`NoteCommand::execute_command`].
-//! For example, this is what the code from [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) that meets the requirements looks like:
+//! call [`NoteCommand::new`] and [`NoteCommand::execute_command`].
+//! For example, this is what the code from [`notebook_example`](https://github.com/Nnenty/lnotebook/tree/master/notebook_example)
+//! that meets the requirements looks like:
 //! ```rust,no run
 //! // --snip--
 //! #[tokio::main]
@@ -43,7 +45,7 @@
 //! ```bash
 //! cargo run -- `your-command`
 //! ```
-//! List of all commands:
+//! ##### List of all commands you can call from terminal:
 //! * `add-note <notename>` - will prompt to enter new note that will be added to the notebook under `notename`.
 //! * `del-note <notename>` - deletes note with `notename` if it exist.
 //! * `del-all` - deletes all total notes from the notebook.
@@ -151,23 +153,15 @@ impl NoteCommand {
     /// * `Some(Command)` if you selected any existing command
     /// * `None` if you **didn't selected**/**selected a non-existent command**
     ///
-    /// More about commands [here][crate::commands::execute_commands].
+    /// Read about terminal commands [here][crate::commands::execute_commands].
     pub async fn new() -> Result<NoteCommand, structopt::clap::Error> {
         Ok(NoteCommand::from_args_safe()?)
     }
     /// Execute specifed command.
     ///
-    /// List of all commands:
-    /// * `add-note <notename>`- prompts to enter new note that will be added to the notebook under `notename`.
-    /// * `del-note <notename>` - deletes note with `notename` if it exist.
-    /// * `del-all` - deletes all total notes from the notebook.
-    /// * `clear-note <notename>` - clears content of `notename`
-    /// * `upd-note <notename>` - prompts to enter a note that will be added instead old note in `notename`.
-    /// * `upd-notename <new notename>` - updates old notename to `new notename` of requested note.
-    /// * `display-note <notename>` - displays `notename`, `note` and note-`id` of requested note.
-    /// * If you did not specify which command to execute, then all total notes will be displayed.
+    /// [List of all terminal commands.](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/index.html#list-of-all-commands-you-can-call-from-terminal).
     ///
-    /// More about these commands [here][crate::commands::execute_commands].
+    /// Read about terminal commands [here][crate::commands::execute_commands].
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
