@@ -1,5 +1,4 @@
-//! This module contains functions that can be combined as you want and used to control a
-//! notebook.
+//! This module contains functions used to control a notebook.
 
 pub mod execute_commands;
 use crate::errors;

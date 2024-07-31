@@ -25,7 +25,7 @@ async fn main() -> anyhow::Result<()> {
 
     event!(Level::INFO, "Connect to db");
 
-    // Converting terminal command to `enum` and save it in `NoteCommand`
+    // Converting CLI command to `enum` and save it in `NoteCommand`
     let c = NoteCommand::new().await?;
     // Execute the selected command
     c.execute_command(&db).await?;

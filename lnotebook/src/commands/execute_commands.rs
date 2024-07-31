@@ -1,13 +1,12 @@
 //! In this module functions from [`commands` module][crate::commands]
-//! executes using commands in
-//! terminal.
+//! executes using commands in CLI.
 //!
 //! ### About module
 //! First of all, the [`LNotebook`][crate] was created so that you can
-//! quickly and easily write your own notebook. This module just demonstrates
-//! one of many uses of the [`LNotebook`][crate], so if this way of using
-//! the [`commands`][crate::commands] doesn't suit you, just write your own way
-//! to use the functions from the [`commands`][crate::commands].
+//! quickly and easily write your own notebook. This module was created so that you can run the notebook
+//! right away without manually using the functions from the [`commands` module][crate::commands],
+//! and it also demonstrates how you could use [`LNotebook`][crate]. So if this way of using
+//! the [`LNotebook`][crate] doesn't suit you, just write your own way to use it.
 //!
 //! ### How use commands
 //! To begin you should write some code that will
@@ -31,7 +30,7 @@
 //!
 //!     event!(Level::DEBUG, "Connect to db");
 //!
-//!     // Converting terminal command variable to NoteCommand option
+//!     // Converting CLI command variable to NoteCommand option
 //!     let a = NoteCommand::new().await?;
 //!     // Execute the selected command
 //!     a.execute_command(&db).await?;
@@ -45,7 +44,7 @@
 //! ```bash
 //! cargo run -- `your-command`
 //! ```
-//! ##### List of all commands you can call from terminal:
+//! ##### List of all commands you can call from CLI:
 //! * `add-note <notename>` - will prompt to enter new note that will be added to the notebook under `notename`.
 //! * `del-note <notename>` - deletes note with `notename` if it exist.
 //! * `del-all` - deletes all total notes from the notebook.
@@ -137,9 +136,9 @@ enum Command {
     },
 }
 
-/// Contains the command as `enum` from terminal to run it later.
+/// Contains the command as `enum` from CLI to run it later.
 ///
-/// This `struct` was created to conveniently store and execute commands on a notebook from terminal commands.
+/// This `struct` was created to conveniently store and execute commands on a notebook from CLI commands.
 /// More about commands for which this structure was created [here][crate::commands::execute_commands].
 #[derive(StructOpt)]
 pub struct NoteCommand {
@@ -147,21 +146,21 @@ pub struct NoteCommand {
     cmd: Option<Command>,
 }
 impl NoteCommand {
-    /// Convert a command from terminal to `enum` and saves it in [struct `NoteCommand`][NoteCommand].
+    /// Convert a command from CLI to `enum` and saves it in [struct `NoteCommand`][NoteCommand].
     ///
     /// Command stores in [`NoteCommand`] as `Option<Command>` and will be:
     /// * `Some(Command)` if you selected any existing command
     /// * `None` if you **didn't selected**/**selected a non-existent command**
     ///
-    /// Read about terminal commands [here][crate::commands::execute_commands].
+    /// Read about CLI commands [here][crate::commands::execute_commands].
     pub async fn new() -> Result<NoteCommand, structopt::clap::Error> {
         Ok(NoteCommand::from_args_safe()?)
     }
     /// Execute specifed command.
     ///
-    /// [List of all terminal commands.](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/index.html#list-of-all-commands-you-can-call-from-terminal).
+    /// [List of all CLI commands.](https://docs.rs/lnotebook/latest/lnotebook/commands/execute_commands/index.html#list-of-all-commands-you-can-call-from-CLI).
     ///
-    /// Read about terminal commands [here][crate::commands::execute_commands].
+    /// Read about CLI commands [here][crate::commands::execute_commands].
     pub async fn execute_command(&self, pool: &PgPool) -> Result<(), NotebookError> {
         match self.cmd.as_ref() {
             Some(Command::AddNote { notename }) => {
