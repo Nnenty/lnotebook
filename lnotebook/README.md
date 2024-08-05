@@ -11,6 +11,12 @@ asynchronous API that will helps you to write simple notebook
 </a>
 </div>
 
+---
+
+<strong>
+I don’t recommend using this API, because it could be done much better
+</strong>
+
 <h3>This API using:</h3>
 
 - **[SQLx](https://github.com/launchbadge/sqlx?tab=readme-ov-file)**
