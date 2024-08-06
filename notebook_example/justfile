@@ -1,6 +1,0 @@
-prepare:
-    cd ../lnotebook && cargo sqlx prepare -- --all-targets
-
-# Use this after you have specified the `DATABASE_URL`
-migrate:
-    cd ../lnotebook && sqlx migrate run

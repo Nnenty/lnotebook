@@ -11,10 +11,10 @@ asynchronous API that will helps you to write simple notebook
 </a>
 </div>
 
----
-
+## Important
 <strong>
-I don’t recommend using this API, because it could be done much better
+I don't recommend using this API in large projects because it is a too
+simple and inflexible API (one of the reasons is this is my first API).
 </strong>
 
 <h3>This API using:</h3>
@@ -28,27 +28,26 @@ Before start working with notebook you must complete commands below.
 1. Clone our repository:
 ```
 git clone https://github.com/Nnenty/lnotebook
-
-cd lnotebook/
 ```
-2. Go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) directory:
-```
-cd notebook_example/
-```
-3. Export your database (change URL on yours):
+2. Export your database (change URL on yours):
 ```
 export DATABASE_URL=postgres://username:password@localhost/db`
 ```
-4. Migrate using command:
+3. Migrate using command:
 ```
-just migrate
+cd lnotebook/
+sqlx migrate run
 ```
 > **Note**: install [SQLx-cli](https://crates.io/crates/sqlx-cli) if you don't have it installed to run code above.
 
-<h4> You did it! Then you have a database ready to use in notebook. </h4s>
+<h4> Then you have a database ready to use in notebook. </h4s>
 
 ## Start the notebook
 > **Clarification**: all code in this section assumes that you have completed all commands from the section [Preparing](https://github.com/Nnenty/lnotebook_api?tab=readme-ov-file#preparing).
+- First, go to [notebook_example](https://github.com/Nnenty/lnotebook/tree/master/notebook_example) directory:
+```
+cd notebook_example/
+```
 
 - Let's try execute `cargo run` only:
 ```
